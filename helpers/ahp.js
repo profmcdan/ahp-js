@@ -208,6 +208,99 @@ class AHP {
 		const consis_ratio = this.get_consistency_ratio(eigenvector);
 		return [ consis_ratio, eigenvector ];
 	}
+
+	get_global_weight() {
+		let criterial_weights = this.evaluate_criteria();
+		criterial_weights = criterial_weights[1];
+		let globalWeights = [];
+		let numOfCriteria = this.A.length;
+		for (let crt = 0; crt < numOfCriteria; crt++) {
+			let sb_local_weight = this.evaluate_subcriteria(crt);
+			if (sb_local_weight[0][1] == "Acceptable") {
+				let eigenvector = sb_local_weight[1];
+				let sb_weights = [];
+				eigenvector.forEach(function(eig) {
+					sb_weights.push(eig * criterial_weights[crt]);
+				});
+			} else {
+				return null;
+			}
+
+			globalWeights.push(sb_weights);
+		}
+		return globalWeights;
+	}
+
+	get_alternative_global_weights() {
+		let sb_weights = this.get_global_weight();
+		if (sb_weights === null) {
+			return null;
+		}
+
+		// sb_weights = np.asarray(sb_weights)   # Convert to NDARRAy
+		// sb_weights = np.ndarray.flatten(sb_weights)
+
+		let sb_weights_final = [];
+		sb_weights.forEach(function(sbw) {
+			sbw.forEach(function(sbw_inner) {
+				sb_weights_final.push(sbw_inner);
+			});
+		});
+		sb_weights = sb_weights_final;
+		// Loop tru each of the subCriteria for the local weights of the Alternative realtive to each.
+		let alternative_local_weights = [];
+		// heck this
+		// alternative_local_weights = [[] for i in range(0,
+		//     len(self.evaluate_alternative(self.ALTERNATIVE[0])[1]))]
+		this.ALTERNATIVE.forEach(function(alt_mat) {
+			alt_local_weights = this.evaluate_alternative(alt_mat);
+			alt_local_weights = alt_local_weights[1];
+			for (let i = 0; i < alt_local_weights.length; i++) {
+				alternative_local_weights[i].push(alt_local_weights);
+			}
+		});
+
+		let alternative_global_weights = [];
+		let numOfAlternative = alt_local_weights.length; // Number of Contractors
+		alternative_local_weights = alternative_local_weights[0];
+		alternative_local_weights = np.transpose(alternative_local_weights);
+		for (let altIndex = 0; altIndex < numOfAlternative; altIndex++) {
+			let givenAltWeight = [];
+			let ref_weight = alternative_local_weights[altIndex];
+			for (let sbIndex = 0; sbIndex < sb_weights.length; sbIndex++) {
+				givenAltWeight.push(sb_weights[sbIndex] * ref_weight[sbIndex]);
+			}
+
+			alternative_global_weights.push(givenAltWeight);
+		}
+
+		return alternative_global_weights;
+	}
+
+	get_qualified_alternatives(threshold) {
+		let priority_weights = this.rank_alternatives();
+		return priority_weights.slice(0, threshold);
+	}
+
+	get_final_alternative(bid_price, estimated_price, threshold) {
+		selected_alternative = this.get_qualified_alternatives(threshold);
+		let selected_index = [];
+		let selected_price = [];
+		selected_alternative.forEach(function(sel) {
+			selected_index.push(sel[1]);
+			selected_price.push(estimated_price - bid_price[sel[1]]);
+		});
+		let selection = Math.min(selected_price);
+		let selected_index = selected_price.indexOf(Math.max(...selected_price));
+		return selectedIndex;
+	}
+
+	evaluate(bid_price, estimated_price, threshold, contractors) {
+		// Contractors - Names of the contractors
+		const selected_contractor = this.get_final_alternative(bid_price, estimated_price, threshold);
+		selected_contractor = contractors[selected_contractor];
+		return selected_contractor;
+	}
 }
 
 module.exports = AHP;
