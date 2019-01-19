@@ -277,6 +277,23 @@ class AHP {
 		return alternative_global_weights;
 	}
 
+	get_final_aggregate(numOfDecisionMakers) {
+		for (let i = 0; i < numOfDecisionMakers; i++) {}
+	}
+
+	rank_alternatives() {
+		let alternative_global_weights = this.get_alternative_global_weights();
+		let priority_weight = [];
+		alternative_global_weights.forEach(function(each_weight) {
+			priority_weight.push(sum(each_weight) / each_weight.length);
+		});
+		priority_weight = priority_weight.map((weight, index) => {
+			return [ weight, index ];
+		});
+		priority_weight.sort((a, b) => b - a); // reverse = True
+		return priority_weight;
+	}
+
 	get_qualified_alternatives(threshold) {
 		let priority_weights = this.rank_alternatives();
 		return priority_weights.slice(0, threshold);
