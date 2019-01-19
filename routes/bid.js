@@ -12,24 +12,17 @@ const Bid = require("../models/Bid");
 // @route   GET api/profile
 // @desc    Get all bids
 // @access  Private
-router.get(
-	"/",
-	passport.authenticate("jwt", {
-		session: false
-	}),
-	(req, res) => {
-		let errors = {};
-		Bid.find()
-			.then((bids) => {
-				if (!bids) {
-					errors.nobid = "There are no bids";
-					return res.status(404).json(errors);
-				}
-				return res.json(bids);
-			})
-			.catch((err) => res.status(404).json(err));
-	}
-);
+router.get("/", (req, res) => {
+	let errors = {};
+	Bid.find()
+		.then((bids) => {
+			if (!bids) {
+				return res.status(404).json({ error: "There are no bids" });
+			}
+			return res.json(bids);
+		})
+		.catch((err) => res.status(404).json(err));
+});
 
 // @route   POST bid
 // @desc    create new bid

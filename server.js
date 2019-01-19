@@ -7,6 +7,7 @@ const config = require("./db");
 
 const usersRoute = require("./routes/user");
 const bidsRoute = require("./routes/bid");
+const contractorRoute = require("./routes/contractor");
 
 mongoose
 	.connect(config.DB, { useNewUrlParser: true })
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", usersRoute);
 app.use("/api/bid", bidsRoute);
+app.use("/api/alternative", contractorRoute);
 
 const PORT = process.env.PORT || 5000;
 
