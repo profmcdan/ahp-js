@@ -50,7 +50,7 @@ const DecisionSchema = new Schema(
 				]
 			}
 		],
-		remarks: { type: String, required: true }
+		remarks: { type: String }
 	},
 	{ timestamps: true }
 );

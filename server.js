@@ -8,6 +8,7 @@ const config = require("./db");
 const usersRoute = require("./routes/user");
 const bidsRoute = require("./routes/bid");
 const contractorRoute = require("./routes/contractor");
+const decisionRoute = require("./routes/decision");
 
 mongoose
 	.connect(config.DB, { useNewUrlParser: true })
@@ -19,8 +20,12 @@ mongoose
 	});
 
 const app = express();
+
+// Passport Middleware
 app.use(passport.initialize());
-require("./passport");
+
+// Passport Config
+require("./passport")(passport);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -32,6 +37,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", usersRoute);
 app.use("/api/bid", bidsRoute);
 app.use("/api/alternative", contractorRoute);
+app.use("/api/decision", decisionRoute);
 
 const PORT = process.env.PORT || 5000;
 

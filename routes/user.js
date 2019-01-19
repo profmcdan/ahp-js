@@ -85,7 +85,7 @@ router.post("/login", (req, res) => {
 					name: user.name,
 					avartar: user.avartar
 				};
-				jwt.sign(payload, "secret", { expiresIn: 3600 }, (err, token) => {
+				jwt.sign(payload, "secret", { expiresIn: 3600 * 24 }, (err, token) => {
 					if (err) {
 						console.log("There is error in the token", err);
 					} else {
