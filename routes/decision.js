@@ -79,7 +79,42 @@ router.post("/:id/criteria", passport.authenticate("jwt", { session: false }), (
 				from,
 				weight
 			};
-			decision.criteria.unshift(newResponse);
+			decision.response.criteria.unshift(newResponse);
+			decision
+				.save()
+				.then((decision) => {
+					return res.json({ decision });
+				})
+				.catch((error) => {
+					return res.status(500).json({ error });
+				});
+		})
+		.catch((error) => {
+			return res.status(500).json({ error });
+		});
+});
+
+// @route   POST decision
+// @desc    add sub-criteria resp
+// @access  [Private]
+router.post("/:id/sub-criteria", passport.authenticate("jwt", { session: false }), (req, res) => {
+	const { id } = req.params;
+	const { to, from, weight, criteria_id } = req.body;
+	Decision.findById(id)
+		.then((decision) => {
+			if (!decision) {
+				return res.status(404).json({ error: "Decision does not exists" });
+			}
+			const newResponse = {
+				criteria: criteria_id,
+				sub: {
+					to,
+					from,
+					weight
+				}
+			};
+
+			decision.response.subcriteria.unshift(newResponse);
 			decision
 				.save()
 				.then((decision) => {
