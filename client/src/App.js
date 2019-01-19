@@ -6,6 +6,13 @@ import "./App.css";
 import Navbar from "./components/Home/Navbar";
 import Landing from "./components/Home/Landing";
 import Footer from "./components/Home/Footer";
+import NewBid from "./components/Forms/NewBid";
+import AddCriteria from "./components/Forms/AddCriteria";
+import NewAlternative from "./components/Alternative/NewAlternative";
+import EditAlternative from "./components/Alternative/EditAlternative";
+import Register from "./components/User/Register";
+import Login from "./components/User/Login";
+import AlternativeList from "./components/Alternative/AlternativeList";
 
 class App extends Component {
 	render() {
@@ -16,6 +23,13 @@ class App extends Component {
 
 					<Switch>
 						<Route exact path="/" component={Landing} />
+						<Route exact path="/register" component={Register} />
+						<Route exact path="/login" component={Login} />
+						<Route exact path="/new-bid" component={NewBid} />
+						<Route exact path="/add-criteria" component={AddCriteria} />
+						<Route exact path="/alternatives" component={AlternativeList} />
+						<Route exact path="/new-alternative" component={NewAlternative} />
+						<Route exact path="/update-alternative" component={EditAlternative} />
 					</Switch>
 
 					<Footer />

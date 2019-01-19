@@ -14,6 +14,14 @@ class Navbar extends Component {
 				<Menu.Item name="home" href="/" active={activeItem === "home"} onClick={this.handleItemClick} />
 
 				<Menu.Item name="menu" active={activeItem === "menu"} onClick={this.handleItemClick} href="/menu" />
+				<Menu.Item name="action" active={activeItem === "action"} onClick={this.handleItemClick}>
+					<Dropdown item text="Action">
+						<Dropdown.Menu>
+							<Dropdown.Item>Open Bids</Dropdown.Item>
+							<Dropdown.Item>My Bids</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
+				</Menu.Item>
 				<Menu.Item name="admin" active={activeItem === "admin"} onClick={this.handleItemClick}>
 					<Dropdown item text="Admin">
 						<Dropdown.Menu>
@@ -29,7 +37,7 @@ class Navbar extends Component {
 					<Menu.Item>
 						<Input icon="search" placeholder="Search..." />
 					</Menu.Item>
-					<Menu.Item name="login" active={activeItem === "login"} onClick={this.handleItemClick} />
+					<Menu.Item  name="login" active={activeItem === "login"} onClick={this.handleItemClick} />
 				</Menu.Menu>
 			</Menu>
 		);
