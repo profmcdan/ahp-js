@@ -9,6 +9,7 @@ const BidSchema = new Schema(
 		},
 		name: { type: String, required: true },
 		description: { type: String, required: true },
+		slog: String,
 		activated: { type: Boolean, default: false },
 		closed: { type: Boolean, default: false },
 		closed_at: { type: Date },
@@ -20,15 +21,12 @@ const BidSchema = new Schema(
 				},
 				subcriteria: [
 					{
+						id: String,
 						title: {
 							type: String,
 							required: true
 						},
 						description: {
-							type: String,
-							required: true
-						},
-						file: {
 							type: String,
 							required: true
 						}

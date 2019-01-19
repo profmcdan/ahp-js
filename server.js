@@ -5,7 +5,8 @@ const passport = require("passport");
 
 const config = require("./db");
 
-const users = require("./routes/user");
+const usersRoute = require("./routes/user");
+const bidsRoute = require("./routes/bid");
 
 mongoose
 	.connect(config.DB, { useNewUrlParser: true })
@@ -27,7 +28,8 @@ app.get("/", (req, res) => {
 	res.send("Hello");
 });
 
-app.use("/api/auth", users);
+app.use("/api/auth", usersRoute);
+app.use("/api/bid", bidsRoute);
 
 const PORT = process.env.PORT || 5000;
 

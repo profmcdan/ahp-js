@@ -15,6 +15,41 @@ const DecisionSchema = new Schema(
 			type: Schema.Types.ObjectId,
 			ref: "contractors"
 		},
+		response: [
+			{
+				criteria: [
+					{
+						from: String,
+						to: String,
+						weight: String
+					}
+				],
+				subcriteria: [
+					{
+						criteria: String,
+						sub: [
+							{
+								from: String,
+								to: String,
+								weight: String
+							}
+						]
+					}
+				],
+				alternative: [
+					{
+						subcriteria: String,
+						alt: [
+							{
+								from: String,
+								to: String,
+								weight: String
+							}
+						]
+					}
+				]
+			}
+		],
 		remarks: { type: String, required: true }
 	},
 	{ timestamps: true }
