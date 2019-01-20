@@ -17,8 +17,8 @@ class Navbar extends Component {
 				<Menu.Item name="action" active={activeItem === "action"} onClick={this.handleItemClick}>
 					<Dropdown item text="Action">
 						<Dropdown.Menu>
-							<Dropdown.Item>Open Bids</Dropdown.Item>
-							<Dropdown.Item>My Bids</Dropdown.Item>
+							<Dropdown.Item href="/open-bids">Open Bids</Dropdown.Item>
+							<Dropdown.Item href="/my-bids">My Bids</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
 				</Menu.Item>
@@ -26,9 +26,9 @@ class Navbar extends Component {
 					<Dropdown item text="Admin">
 						<Dropdown.Menu>
 							<Dropdown.Item href="/new-bid">Create New Bid</Dropdown.Item>
-							<Dropdown.Item>Manage Bids</Dropdown.Item>
-							<Dropdown.Item>Manage Alternatives</Dropdown.Item>
-							<Dropdown.Item>Manage Users</Dropdown.Item>
+							<Dropdown.Item href="/bids">Manage Bids</Dropdown.Item>
+							<Dropdown.Item href="/alternatives">Manage Alternatives</Dropdown.Item>
+							<Dropdown.Item href="/users">Manage Users</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
 				</Menu.Item>
@@ -37,7 +37,7 @@ class Navbar extends Component {
 					<Menu.Item>
 						<Input icon="search" placeholder="Search..." />
 					</Menu.Item>
-					<Menu.Item  name="login" active={activeItem === "login"} onClick={this.handleItemClick} />
+					<Menu.Item name="login" active={activeItem === "login"} onClick={this.handleItemClick} href="/login" />
 				</Menu.Menu>
 			</Menu>
 		);
