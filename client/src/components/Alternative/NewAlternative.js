@@ -20,7 +20,7 @@ class NewAlternative extends Component {
 					<Header>Create a Alternative</Header>
 					<Form>
 						<Form.Field>
-							<input type="text" placeholder="Enter Full Name" value={name} />
+							<input type="text" placeholder="Enter Full Name/Company Name" value={name} />
 						</Form.Field>
 						<Form.Field>
 							<input type="text" placeholder="Enter Email Address" value={email} />

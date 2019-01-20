@@ -13,6 +13,7 @@ import EditAlternative from "./components/Alternative/EditAlternative";
 import Register from "./components/User/Register";
 import Login from "./components/User/Login";
 import AlternativeList from "./components/Alternative/AlternativeList";
+import NewDecision from "./components/Decision/NewDecision";
 
 class App extends Component {
 	render() {
@@ -30,6 +31,7 @@ class App extends Component {
 						<Route exact path="/alternatives" component={AlternativeList} />
 						<Route exact path="/new-alternative" component={NewAlternative} />
 						<Route exact path="/update-alternative" component={EditAlternative} />
+						<Route exact path="/compare" component={NewDecision} />
 					</Switch>
 
 					<Footer />
