@@ -6,9 +6,9 @@ const formData = require("express-form-data");
 const cors = require("cors");
 const path = require("path");
 const logger = require("morgan");
-
 const config = require("./db");
 
+const app = express();
 app.use(logger("dev"));
 app.use(express.static(path.join(__dirname, "client", "build")));
 
@@ -31,8 +31,6 @@ mongoose
 	.catch((err) => {
 		console.log("Cannot connect to the database: " + err);
 	});
-
-const app = express();
 
 // Passport Middleware
 app.use(passport.initialize());
