@@ -1,10 +1,13 @@
 let RI_TABLE = [ 0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49 ]; // Look-up Table
 
 class AHP {
-	constructor(CRITERIA, SUBCRITERIA, ALTERNATIVE) {
+	constructor(CRITERIA, SUBCRITERIA, ALTERNATIVE, ALL_CRITERIA_MATRIX, ALL_SUB_MATRIX, ALL_ALTERNATIVE_MATRIX) {
 		this.A = CRITERIA;
 		this.SUBCRITERIA = SUBCRITERIA;
 		this.ALTERNATIVE = ALTERNATIVE;
+		this.ALL_CRITERIA_MATRIX = ALL_CRITERIA_MATRIX;
+		this.ALL_SUB_MATRIX = ALL_SUB_MATRIX;
+		this.ALL_ALTERNATIVE_MATRIX = ALL_ALTERNATIVE_MATRIX;
 	}
 
 	get_size(A) {
@@ -277,12 +280,34 @@ class AHP {
 		return alternative_global_weights;
 	}
 
-	get_final_aggregate(numOfDecisionMakers) {
-		for (let i = 0; i < numOfDecisionMakers; i++) {}
+	// TODO --  Fix this for a multi-dimensional array
+	get_sum(all_weights) {
+		return all_weights;
 	}
 
-	rank_alternatives() {
-		let alternative_global_weights = this.get_alternative_global_weights();
+	get_final_aggregate(numOfDecisionMakers) {
+		const global_weights = [];
+		for (let i = 0; i < numOfDecisionMakers; i++) {
+			const weights = get_global_weight(
+				this.ALL_CRITERIA_MATRIX[i],
+				this.ALL_SUB_MATRIX[i],
+				this.ALL_ALTERNATIVE_MATRIX[i]
+			);
+			global_weights.push(weights);
+		}
+		// compute the average of the weights PLS CHECK THAT THIS WORKS [TODO]
+		let final_weight = get_sum(global_weights) / numOfDecisionMakers;
+
+		return final_weight;
+	}
+
+	rank_alternatives(numOfDecisionMakers) {
+		let alternative_global_weights = this.get_final_aggregate(
+			numOfDecisionMakers,
+			this.ALL_CRITERIA_MATRIX,
+			this.ALL_SUB_MATRIX,
+			this.ALL_ALTERNATIVE_MATRIX
+		);
 		let priority_weight = [];
 		alternative_global_weights.forEach(function(each_weight) {
 			priority_weight.push(sum(each_weight) / each_weight.length);
@@ -294,13 +319,25 @@ class AHP {
 		return priority_weight;
 	}
 
-	get_qualified_alternatives(threshold) {
-		let priority_weights = this.rank_alternatives();
+	get_qualified_alternatives(numOfDecisionMakers, threshold) {
+		let priority_weights = this.rank_alternatives(
+			numOfDecisionMakers,
+			this.ALL_CRITERIA_MATRIX,
+			this.ALL_SUB_MATRIX,
+			this.ALL_ALTERNATIVE_MATRIX
+		);
 		return priority_weights.slice(0, threshold);
 	}
 
 	get_final_alternative(bid_price, estimated_price, threshold) {
-		selected_alternative = this.get_qualified_alternatives(threshold);
+		const numOfDecisionMakers = ALL_CRITERIA_MATRIX.length;
+		selected_alternative = this.get_qualified_alternatives(
+			numOfDecisionMakers,
+			this.ALL_CRITERIA_MATRIX,
+			this.ALL_SUB_MATRIX,
+			this.ALL_ALTERNATIVE_MATRIX,
+			threshold
+		);
 		let selected_index = [];
 		let selected_price = [];
 		selected_alternative.forEach(function(sel) {
