@@ -42,38 +42,55 @@ class BidDetail extends Component {
 		return (
 			<div className="ui container">
 				<div>
-					<Header>Bid Details</Header>
-					<h4>{bid.name}</h4>
-					<h5>{bid.description}</h5>
+					<div class="ui top segment banner">
+						<div>
+							<Header>Bid Details</Header>
+							<h4>{bid.name}</h4>
+							<h5>{bid.description}</h5>
+						</div>
+					</div>
 				</div>
 				<div className="ui grid">
 					<div className="eight wide column">
-						<div className="ui column">
-							<Card.Group>
-								{criteria.map((crt) => {
-									return (
-										<Card fluid color="green" key={crt._id}>
-											<Card.Content>
-												 <Card.Header>{crt.title}</Card.Header>
-												<Card.Description>{crt.description}</Card.Description>
-											</Card.Content>
-										</Card>
-									);
-								})}
-							</Card.Group>
-						</div>
-						<a className="ui button" href={"/add-criteria/" + bid_id}>
+						<h4 class="ui horizontal divider header">
+							<i class="tag icon" />
+							Criteria
+						</h4>
+						<Card.Group>
+							{criteria.map((crt) => {
+								return (
+									<Card fluid color="green" key={crt._id}>
+										<Card.Content>
+											 <Card.Header>
+												<a href={"/bid/" + bid_id + "/" + crt._id}>{crt.title}</a>
+											</Card.Header>
+											<Card.Meta>{crt.subcriteria.length} sub-criteria</Card.Meta>
+											<Card.Description>{crt.description}</Card.Description>
+										</Card.Content>
+									</Card>
+								);
+							})}
+						</Card.Group>
+
+						<a className="ui primary button" href={"/add-criteria/" + bid_id}>
 							Add Criteria
 						</a>
 					</div>
 
 					<div className="eight wide column">
+						<h4 class="ui horizontal divider header">
+							<i class="tag icon" />
+							Alternatives
+						</h4>
 						<Card.Group>
 							{contractors.map((crt) => {
 								return (
 									<Card fluid color="green" key={crt._id}>
 										<Card.Content>
-											 <Card.Header>{crt.name}</Card.Header>
+											 <Card.Header>
+												{" "}
+												<a href={"/alt/" + bid_id + "/" + crt._id}>{crt.name}</a>{" "}
+											</Card.Header>
 											<Card.Meta>
 												{crt.phone} / {crt.email}
 											</Card.Meta>
@@ -83,7 +100,7 @@ class BidDetail extends Component {
 								);
 							})}
 						</Card.Group>
-						<a className="ui button" href={"/new-alternative/" + bid_id}>
+						<a className="ui primary button" href={"/new-alternative/" + bid_id}>
 							Add Alternative
 						</a>
 					</div>

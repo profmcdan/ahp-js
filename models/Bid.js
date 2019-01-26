@@ -42,7 +42,7 @@ const BidSchema = new Schema(
 				address: { type: String },
 				documents: [
 					{
-						name: { type: String, required: true },
+						file_title: { type: String, required: true },
 						filename: { type: String }
 					}
 				],
