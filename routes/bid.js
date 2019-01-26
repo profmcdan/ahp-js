@@ -24,6 +24,21 @@ router.get("/", (req, res) => {
 		.catch((err) => res.status(404).json(err));
 });
 
+// @route   GET api/profile
+// @desc    Get all bids
+// @access  Private
+router.get("/:id", (req, res) => {
+	let errors = {};
+	Bid.findById(req.params.id)
+		.then((bid) => {
+			if (!bid) {
+				return res.status(404).json({ error: "This bid does not exist" });
+			}
+			return res.json({ bid });
+		})
+		.catch((err) => res.status(404).json(err));
+});
+
 // @route   POST bid
 // @desc    create new bid
 // @access  [Private]
@@ -81,6 +96,8 @@ router.post("/:id/criteria/:criteria_id", (req, res) => {
 			if (!bid) {
 				return res.status(404).json({ error: "No bid found with that ID" });
 			}
+			console.log(criteria_id);
+
 			bid.criteria.id(criteria_id).subcriteria.unshift({ title, description });
 			bid
 				.save()
@@ -88,6 +105,39 @@ router.post("/:id/criteria/:criteria_id", (req, res) => {
 					return res.status(201).json({ bid });
 				})
 				.catch((error) => {
+					console.log(error);
+					return res.status(500).json({ error });
+				});
+		})
+		.catch((err) =>
+			res.status(404).json({
+				error: "No bid found with that ID"
+			})
+		);
+});
+
+router.post("/:id/criteria", (req, res) => {
+	const { id } = req.params;
+	const { criteria_id, sub_list } = req.body;
+
+	Bid.findById(id)
+		.then((bid) => {
+			if (!bid) {
+				return res.status(404).json({ error: "No bid found with that ID" });
+			}
+			if (sub_list.length > 0) {
+				sub_list.forEach((sub) => {
+					bid.criteria.id(criteria_id).subcriteria.unshift({ title: sub });
+				});
+			}
+
+			bid
+				.save()
+				.then((bid) => {
+					return res.status(201).json({ bid });
+				})
+				.catch((error) => {
+					console.log(error);
 					return res.status(500).json({ error });
 				});
 		})
@@ -103,20 +153,21 @@ router.post("/:id/criteria/:criteria_id", (req, res) => {
 // @access  [Private]
 router.post("/:id/contractor", (req, res) => {
 	const { id } = req.params;
-	const { contractor_id, bid_price } = req.body;
+	const { bid_price, name, phone, email, address } = req.body;
 
 	Bid.findById(id)
 		.then((bid) => {
 			if (!bid) {
 				return res.status(404).json({ error: "No bid found with that ID" });
 			}
-			bid.contractors.unshift({ name: contractor_id, bid_price: bid_price });
+			bid.contractors.unshift({ name, phone, email, address, bid_price });
 			bid
 				.save()
 				.then((bid) => {
 					return res.status(201).json({ bid });
 				})
 				.catch((error) => {
+					console.log(error);
 					return res.status(500).json({ error });
 				});
 		})

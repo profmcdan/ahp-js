@@ -14,12 +14,14 @@ import Register from "./components/User/Register";
 import Login from "./components/User/Login";
 import AlternativeList from "./components/Alternative/AlternativeList";
 import NewDecision from "./components/Decision/NewDecision";
+import Bids from "./components/Bid/Bids";
+import BidDetail from "./components/Bid/BidDetail";
 
 class App extends Component {
 	render() {
 		return (
 			<Router>
-				<Container>
+				<div className="ui container">
 					<Navbar />
 
 					<Switch>
@@ -27,15 +29,17 @@ class App extends Component {
 						<Route exact path="/register" component={Register} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/new-bid" component={NewBid} />
-						<Route exact path="/add-criteria" component={AddCriteria} />
+						<Route exact path="/add-criteria/:bid_id" component={AddCriteria} />
 						<Route exact path="/alternatives" component={AlternativeList} />
-						<Route exact path="/new-alternative" component={NewAlternative} />
+						<Route exact path="/new-alternative/:bid_id" component={NewAlternative} />
 						<Route exact path="/update-alternative" component={EditAlternative} />
 						<Route exact path="/compare" component={NewDecision} />
+						<Route exact path="/bids" component={Bids} />
+						<Route exact path="/bid/:id" component={BidDetail} />
 					</Switch>
 
 					<Footer />
-				</Container>
+				</div>
 			</Router>
 		);
 	}

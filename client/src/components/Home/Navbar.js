@@ -10,8 +10,8 @@ class Navbar extends Component {
 		const { activeItem } = this.state;
 
 		return (
-			<Menu secondary>
-				<Menu.Item name="home" href="/" active={activeItem === "home"} onClick={this.handleItemClick} />
+			<Menu className="ui secondary menu">
+				<Menu.Item name="AHP" href="/" active={activeItem === "AHP"} onClick={this.handleItemClick} />
 
 				<Menu.Item name="menu" active={activeItem === "menu"} onClick={this.handleItemClick} href="/menu" />
 				<Menu.Item name="action" active={activeItem === "action"} onClick={this.handleItemClick}>

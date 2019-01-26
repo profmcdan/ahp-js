@@ -36,10 +36,16 @@ const BidSchema = new Schema(
 		],
 		contractors: [
 			{
-				name: {
-					type: Schema.Types.ObjectId,
-					ref: "contractors"
-				},
+				name: { type: String },
+				email: { type: String },
+				phone: { type: String },
+				address: { type: String },
+				documents: [
+					{
+						name: { type: String, required: true },
+						filename: { type: String }
+					}
+				],
 				bid_price: {
 					type: String
 				}

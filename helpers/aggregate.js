@@ -22,3 +22,31 @@ const aggregate_weights = (numOfDecisionMakers, ALL_CRITERIA_MATRIX, ALL_SUB_MAT
 
 	return final_weight;
 };
+
+function flatten(array) {
+	var flat = [];
+	for (var i = 0, l = array.length; i < l; i++) {
+		var type = Object.prototype.toString.call(array[i]).split(" ").pop().split("]").shift().toLowerCase();
+		if (type) {
+			flat = flat.concat(/^(array|collection|arguments|object)$/.test(type) ? flatten(array[i]) : array[i]);
+		}
+	}
+	return flat;
+}
+
+function get_sum(flattenedArray) {
+	var total = 0;
+	for (var i = 0, l = flattenedArray.length; i < l; i++) {
+		total += flattenedArray[i];
+	}
+	var average = total / flattenedArray.length;
+	return average;
+}
+
+var A = Array(3);
+for (i = 0; i < A.length; i++) {
+	A[i] = new Array(2);
+	for (j = 0; j < A[i].length; j++) {
+		A[i][j] = i + j;
+	}
+}
