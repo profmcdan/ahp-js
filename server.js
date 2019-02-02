@@ -10,6 +10,7 @@ const config = require("./db");
 
 const app = express();
 app.use(logger("dev"));
+app.use(express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "client", "build")));
 
 // Parse incoming requests data (https://github.com/expressjs/body-parser)

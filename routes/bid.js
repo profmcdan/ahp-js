@@ -2,18 +2,12 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const passport = require("passport");
+
 const multer = require("multer");
-
-var storage = multer.diskStorage({
-	destination: function(req, file, cb) {
-		cb(null, "/uploads");
-	},
-	filename: function(req, file, cb) {
-		cb(null, file.fieldname + "-" + Date.now());
-	}
-});
-
-var upload = multer({ storage: storage });
+const path = require("path");
+const cloudinary = require("cloudinary");
+const apiKey = require("../config/keys").config.cloudinaryConfig;
+cloudinary.config(apiKey);
 
 // Load Validation
 // const validateProfileInput = require('../../validation/profile');
@@ -36,6 +30,40 @@ router.get("/", (req, res) => {
 		.catch((err) => res.status(404).json(err));
 });
 
+router.get("/opened", (req, res) => {
+	let errors = {};
+	Bid.find({ activated: true, closed: false })
+		.then((bids) => {
+			if (!bids) {
+				return res.status(404).json({ error: "There are no bids" });
+			}
+			return res.json(bids);
+		})
+		.catch((err) => res.json(err));
+});
+
+router.post("/:id/activate", (req, res) => {
+	let activated;
+	Bid.findById(req.params.id).then((bid) => {
+		if (!bid) {
+			return re.json({ status: "404", error: "Not Found" });
+		}
+		if (bid.activated) {
+			bid.activated = false;
+		} else {
+			bid.activated = true;
+		}
+		bid
+			.save()
+			.then((updatedBid) => {
+				return res.json(updatedBid);
+			})
+			.catch((error) => {
+				return res.json({ status: "500", error: error });
+			});
+	});
+});
+
 // @route   GET api/profile
 // @desc    Get all bids
 // @access  Private
@@ -46,7 +74,7 @@ router.get("/:id", (req, res) => {
 			if (!bid) {
 				return res.status(404).json({ error: "This bid does not exist" });
 			}
-			return res.json({ bid });
+			return res.json({ bid: bid, status: "Got one not all" });
 		})
 		.catch((err) => res.status(404).json(err));
 });
@@ -191,42 +219,62 @@ router.post("/:id/contractor", (req, res) => {
 });
 
 // Upload file for alternative
-router.post("/:id/alternative/upload", upload.single("document"), (req, res) => {
-	if (req.file) {
-		console.log("Uploading file...");
-		var filename = req.file.filename;
-		console.log(req.file);
-		var uploadStatus = "File Uploaded Successfully";
-		const { file_title, contractor_id } = req.body;
-		const { id } = req.params;
+router.post("/:id/alternative/upload", (req, res) => {
+	// console.log("Uploading file...");
+	let filename = "";
+	const values = Object.values(req.files);
+	const promises = values.map((document) => cloudinary.uploader.upload(document.path));
+	Promise.all(promises)
+		.then((results) => {
+			filename = results[0].secure_url;
+			console.log(results);
+			const { file_title, contractor_id } = req.body;
+			const { id } = req.params;
+			console.log(req.files);
 
-		Bid.findById(id)
-			.then((bid) => {
-				if (!bid) {
-					return res.status(404).json({ error: "No bid found with that ID" });
-				}
+			Bid.findById(id)
+				.then((bid) => {
+					if (!bid) {
+						return res.status(404).json({ error: "No bid found with that ID" });
+					}
+					console.log(bid);
 
-				bid.contractors.id(contractor_id).documents.unshift({ file_title, filename });
-				bid
-					.save()
-					.then((bid) => {
-						return res.status(201).json({ bid });
-					})
-					.catch((error) => {
-						console.log(error);
-						return res.status(500).json({ error });
-					});
-			})
-			.catch((error) => {
-				return res.status(500).json({ error });
-			});
-	} else {
-		console.log("No File Uploaded");
-		var filename = "FILE NOT UPLOADED";
-		var uploadStatus = "File Upload Failed";
-	}
+					bid.contractors.id(contractor_id).documents.unshift({ file_title, filename });
+					bid
+						.save()
+						.then((bid) => {
+							return res.status(201).json({ bid });
+						})
+						.catch((error) => {
+							console.log(error);
+							return res.status(500).json({ error });
+						});
+				})
+				.catch((error) => {
+					console.log(error);
+					return res.status(500).json({ error });
+				});
+		})
+		.catch((error) => {
+			return res.status(500).json({ error: "Error uploading file to server" });
+		});
+});
 
-	return res.json({ filename, uploadStatus });
+router.post("/upload", function(req, res) {
+	var form = new formidable.IncomingForm();
+
+	form.parse(req);
+
+	form.on("fileBegin", function(name, file) {
+		file.path = __dirname + "/uploads/" + file.name;
+	});
+
+	form.on("file", function(name, file) {
+		console.log(file);
+		console.log("Uploaded " + file.name);
+	});
+
+	return res.json({ file: "File Uploaded" });
 });
 
 module.exports = router;

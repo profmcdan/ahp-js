@@ -10,7 +10,8 @@ class Bids extends Component {
 		this.state = {
 			bids: [],
 			column: null,
-			direction: null
+			direction: null,
+			checked: false
 		};
 	}
 	handleSort = (clickedColumn) => () => {
@@ -43,12 +44,45 @@ class Bids extends Component {
 			});
 	}
 
+	closeOrOpenBid = (id) => {
+		let endpointUrl = `/api/bid/${id}/activate`;
+		const oldBids = this.state.bids;
+		const bid_to_change = oldBids.find((bid) => bid._id === id);
+		let activatedState;
+		const data = new FormData();
+		if (bid_to_change.activated) {
+			activatedState = false;
+		} else {
+			activatedState = true;
+		}
+		data.append("activated", activatedState);
+
+		axios
+			.post(endpointUrl, data)
+			.then((response) => {
+				// Return and edit this heat in the list of heats
+				if (response.data.activated) {
+					activatedState = true;
+				} else {
+					activatedState = false;
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		const newBids = oldBids.map((h) => (h._id === id ? { ...h, activated: activatedState } : h));
+		this.setState({ bids: newBids });
+		console.log(this.state);
+		this.setState({ checked: !this.state.checked });
+		// this.getHeats();
+	};
+
 	deleteBid = (id) => {
 		console.log("Im deleting this bid, pls show a modal");
 	};
 
 	render() {
-		const { bids, column, direction } = this.state;
+		const { bids, column, direction, checked } = this.state;
 		return (
 			<div className="ui container">
 				<Header>All Bids here - Admin</Header>
@@ -70,7 +104,7 @@ class Bids extends Component {
 							return (
 								<Table.Row key={bid._id}>
 									<Table.Cell collapsing>
-										<Checkbox slider />
+										<Checkbox toggle onChange={() => this.closeOrOpenBid(bid._id)} checked={bid.activated} />
 									</Table.Cell>
 									<Table.Cell>
 										<Link to={"/bid/" + bid._id}>{bid.name}</Link>

@@ -98,7 +98,7 @@ class AddSubCriteria extends Component {
 					</Header>
 					<div className="ui segment">
 						<List animated verticalAlign="middle">
-							{subcriteria.map((sub) => {
+							{subcriteria.map((sub) => { 
 								return (
 									<List.Item key={sub._id}>
 										<Image avatar src="https://react.semantic-ui.com/images/avatar/small/helen.jpg" />

@@ -17,6 +17,9 @@ import NewDecision from "./components/Decision/NewDecision";
 import Bids from "./components/Bid/Bids";
 import BidDetail from "./components/Bid/BidDetail";
 import AddSubCriteria from "./components/Bid/AddSubCriteria";
+import OpenBids from "./components/Bid/OpenBids";
+import CompareCriteria from "./components/Decision/CompareCriteria";
+import CompareAlternative from "./components/Decision/CompareAlternative";
 
 class App extends Component {
 	render() {
@@ -34,11 +37,17 @@ class App extends Component {
 						<Route exact path="/alternatives" component={AlternativeList} />
 						<Route exact path="/new-alternative/:bid_id" component={NewAlternative} />
 						<Route exact path="/update-alternative" component={EditAlternative} />
-						<Route exact path="/compare" component={NewDecision} />
+
+						<Route exact path="/decision-criteria/:bid_id" component={CompareCriteria} />
+						<Route exact path="/decision-alternative/:bid_id" component={CompareAlternative} />
+						<Route exact path="/bid/:bid_id/sub/:criteria_id" component={CompareCriteria} />
+
 						<Route exact path="/bids" component={Bids} />
 						<Route exact path="/bid/:id" component={BidDetail} />
 						<Route exact path="/bid/:bid_id/:criteria_id" component={AddSubCriteria} />
 						<Route exact path="/alt/:bid_id/:contractor_id" component={EditAlternative} />
+
+						<Route exact path="/open-bids" component={OpenBids} />
 					</Switch>
 
 					<Footer />

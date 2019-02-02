@@ -1,19 +1,25 @@
 import React, { Component } from "react";
-import { Icon } from "semantic-ui-react";
+import { Icon, Button } from "semantic-ui-react";
 
-class CustomButton extends Component {
+class CompareInput extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			name: ""
 		};
 	}
+	handleClick = () => {
+		this.setState({ active: !this.state.active });
+		console.log("This button clicked");
+	};
 	render() {
 		const { from_text, to_text } = this.props;
+		const { active } = this.state;
 		return (
-			<div className="ui  icon buttons">
+			<div className="ui icon buttons">
 				<div className="ui purple right pointing label">{from_text}</div>
-				<div className="ui button" data-tooltip="Extremely Preferred">
+
+				<div className="ui toggle button" data-tooltip="Extremely Preferred" active={active} onClick={this.handleClick}>
 					<Icon name="angle double left" size="small" />{" "}
 				</div>
 				<div className="ui button" data-tooltip="Very Strongly to Extremely Preferred">
@@ -70,4 +76,4 @@ class CustomButton extends Component {
 	}
 }
 
-export default CustomButton;
+export default CompareInput;

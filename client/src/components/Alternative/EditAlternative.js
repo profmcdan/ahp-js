@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Header, Button } from "semantic-ui-react";
+import { Form, Header, Button, List, Image } from "semantic-ui-react";
 import Axios from "axios";
 
 class EditAlternative extends Component {
@@ -13,7 +13,8 @@ class EditAlternative extends Component {
 			loaded: 0,
 			bid: {},
 			contractors: [],
-			contractor: {}
+			contractor: {},
+			documents: []
 		};
 
 		this.handleChange = this.handleChange.bind(this);
@@ -29,11 +30,12 @@ class EditAlternative extends Component {
 				const bid = response.data.bid;
 				const contractors = bid.contractors;
 				const contractor = contractors.find((crt) => crt._id === contractor_id);
-				console.log(contractor);
+				console.log(contractor.documents);
 				this.setState({
 					bid: bid,
 					contractors: bid.contractors,
-					contractor: contractor
+					contractor: contractor,
+					documents: contractor.documents
 				});
 			})
 			.catch((error) => {
@@ -83,18 +85,53 @@ class EditAlternative extends Component {
 						loaded: ProgressEvent.loaded / ProgressEvent.total * 100
 					});
 				}
-			}).then((res) => {
-				console.log(res.data);
-				this.props.history.push("/bid/" + bid_id);
+			}).then((response) => {
+				console.log(response.data);
+				console.log(response.data);
+				const bid = response.data.bid;
+				const contractors = bid.contractors;
+				const contractor = contractors.find((crt) => crt._id === contractor_id);
+				console.log(contractor.documents);
+				this.setState({
+					bid: bid,
+					contractors: bid.contractors,
+					contractor: contractor,
+					documents: contractor.documents,
+					file_title: "",
+					document: null
+				});
+				// this.props.history.push("/bid/" + bid_id);
 			});
 		}
 	};
 
 	render() {
-		const { file_title, document } = this.state;
+		const { file_title, documents } = this.state;
 		return (
 			<div className="ui container grid">
-				<div className="four wide column" />
+				<div className="eight wide column">
+					<Header>List of documents already uploaded</Header>
+					<div class="ui segment">
+						<List animated verticalAlign="middle">
+							{documents.map((doc) => {
+								return (
+									<List.Item key={doc._id}>
+										<Image avatar src="https://react.semantic-ui.com/images/avatar/small/helen.jpg" />
+
+										<List.Content>
+											<List.Header>{doc.file_title}</List.Header>
+											<List.Description>
+												<a href={doc.filename} target="_blank" rel="noopener noreferrer">
+													View
+												</a>
+											</List.Description>
+										</List.Content>
+									</List.Item>
+								);
+							})}
+						</List>
+					</div>
+				</div>
 				<div className="eight wide column">
 					<Header>Update a Alternative</Header>
 					<Form onSubmit={this.handleSubmit} enctype="multipart/form-data">
