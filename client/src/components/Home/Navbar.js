@@ -1,13 +1,39 @@
 import React, { Component } from "react";
 import { Input, Menu, Dropdown } from "semantic-ui-react";
+import setAuthToken from "../../utils/setAuthToken";
+import jwt_decode from "jwt-decode";
 
 class Navbar extends Component {
-	state = { activeItem: "home" };
+	state = { activeItem: "home", loginText: "Login" };
 
 	handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+	logoutUser = () => {
+		// Remove the token from localStorage
+		localStorage.removeItem("jwtToken");
+		// Remove the auth header from future requests
+		setAuthToken(false);
+		// Set current user to {} which will set isAuthenticated to false
+	};
+
+	handleLogout = () => {
+		this.logoutUser();
+		this.setState({ logout: true });
+		window.location.reload();
+		// return <Redirect to="/login" />;
+	};
+
+	componentWillMount() {
+		const token = localStorage.getItem("jwtToken");
+		// Decode token to get user
+		if (token) {
+			const decoded = jwt_decode(token);
+			this.setState({ user: decoded, loginText: "Logout" });
+		}
+	}
+
 	render() {
-		const { activeItem } = this.state;
+		const { activeItem, loginText } = this.state;
 
 		return (
 			<Menu className="ui secondary menu">
@@ -37,7 +63,9 @@ class Navbar extends Component {
 					<Menu.Item>
 						<Input icon="search" placeholder="Search..." />
 					</Menu.Item>
-					<Menu.Item name="login" active={activeItem === "login"} onClick={this.handleItemClick} href="/login" />
+					<Menu.Item name="login" active={activeItem === "login"} onClick={this.handleLogout} href="/login">
+						{loginText}
+					</Menu.Item>
 				</Menu.Menu>
 			</Menu>
 		);

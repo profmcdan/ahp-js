@@ -13,13 +13,13 @@ import EditAlternative from "./components/Alternative/EditAlternative";
 import Register from "./components/User/Register";
 import Login from "./components/User/Login";
 import AlternativeList from "./components/Alternative/AlternativeList";
-import NewDecision from "./components/Decision/NewDecision";
 import Bids from "./components/Bid/Bids";
 import BidDetail from "./components/Bid/BidDetail";
 import AddSubCriteria from "./components/Bid/AddSubCriteria";
 import OpenBids from "./components/Bid/OpenBids";
 import CompareCriteria from "./components/Decision/CompareCriteria";
 import CompareAlternative from "./components/Decision/CompareAlternative";
+import BidDetails from "./components/Bid/BidDetails-User";
 
 class App extends Component {
 	render() {
@@ -44,6 +44,7 @@ class App extends Component {
 
 						<Route exact path="/bids" component={Bids} />
 						<Route exact path="/bid/:id" component={BidDetail} />
+						<Route exact path="/bid-user/:id" component={BidDetails} />
 						<Route exact path="/bid/:bid_id/:criteria_id" component={AddSubCriteria} />
 						<Route exact path="/alt/:bid_id/:contractor_id" component={EditAlternative} />
 

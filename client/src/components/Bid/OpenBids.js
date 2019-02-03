@@ -3,6 +3,7 @@ import { Header, Button, Checkbox, Icon, Table, Dropdown } from "semantic-ui-rea
 import _ from "lodash";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 class OpenBids extends Component {
 	constructor(props) {
@@ -12,6 +13,19 @@ class OpenBids extends Component {
 			column: null,
 			direction: null
 		};
+	}
+
+	componentDidMount() {
+		// 	const { match: { params } } = this.props;
+		// 	this.setState({ bid_id: params.bid_id });
+		const token = localStorage.getItem("jwtToken");
+		// Decode token to get user
+		if (token) {
+			const decoded = jwt_decode(token);
+			this.setState({ user: decoded });
+		} else {
+			this.props.history.push(`/login`);
+		}
 	}
 
 	componentWillMount() {
@@ -44,6 +58,21 @@ class OpenBids extends Component {
 			direction: direction === "ascending" ? "descending" : "ascending"
 		});
 	};
+
+	handleActivate = (bid_id) => {
+		const { user } = this.state;
+		if (user) {
+			const endPoint = `/api/decision/${bid_id}/${user.id}`;
+			// alert(id);
+			axios.post(endPoint).then((response) => {
+				if (response.data.error) {
+					alert("Response Exists Already.");
+				} else if (response.data.decision) {
+					alert(`Response Created Successfully.`);
+				}
+			});
+		}
+	};
 	render() {
 		const { bids, column, direction } = this.state;
 		return (
@@ -55,6 +84,7 @@ class OpenBids extends Component {
 							<Table.HeaderCell />
 							<Table.HeaderCell>Bid Name</Table.HeaderCell>
 							<Table.HeaderCell>Description</Table.HeaderCell>
+							<Table.HeaderCell>Start Response</Table.HeaderCell>
 							<Table.HeaderCell>Criteria</Table.HeaderCell>
 							<Table.HeaderCell>Alternatives</Table.HeaderCell>
 							<Table.HeaderCell>Sub-Criteria</Table.HeaderCell>
@@ -66,9 +96,14 @@ class OpenBids extends Component {
 								<Table.Row key={bid._id}>
 									<Table.Cell />
 									<Table.Cell>
-										<Link to={"/bid/" + bid._id}>{bid.name}</Link>
+										<Link to={"/bid-user/" + bid._id}>{bid.name}</Link>
 									</Table.Cell>
 									<Table.Cell>{bid.description}</Table.Cell>
+									<Table.Cell>
+										<Button onClick={() => this.handleActivate(bid._id)}>
+											<Icon name="check  blue" size="big" />
+										</Button>
+									</Table.Cell>
 									<Table.Cell>
 										<Link to={"/decision-criteria/" + bid._id}>
 											<Icon name="resolving" /> Compare

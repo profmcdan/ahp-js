@@ -75,7 +75,7 @@ router.post("/login", (req, res) => {
 	User.findOne({ email }).then((user) => {
 		if (!user) {
 			errors.email = "User not found";
-			return res.status(404).json(errors);
+			return res.json({ statusCode: 404, errors });
 		}
 
 		bcrypt.compare(password, user.password).then((isMatch) => {
@@ -83,6 +83,7 @@ router.post("/login", (req, res) => {
 				const payload = {
 					id: user.id,
 					name: user.name,
+					email: user.email,
 					avartar: user.avartar
 				};
 				jwt.sign(payload, "secret", { expiresIn: 3600 * 24 }, (err, token) => {

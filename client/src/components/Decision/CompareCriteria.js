@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Header, Button, Icon } from "semantic-ui-react";
 import CompareInput from "./CompareInput";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 import Compare from "./Compare";
 
 class CompareCriteria extends Component {
@@ -14,15 +15,20 @@ class CompareCriteria extends Component {
 			pref: "",
 			description: "",
 			criteria_id: "",
-			subcriteria: []
+			subcriteria: [],
+			scores: [],
+			user: null,
+			decision_id: null
 		};
 	}
 
 	getBidDetails = () => {
 		const { bid_id } = this.state;
 		console.log(bid_id);
+		const endPoint = `/api/bid/${bid_id}`;
+		console.log(endPoint);
 		axios
-			.get(`/api/bid/${bid_id}`)
+			.get(endPoint)
 			.then((response) => {
 				console.log(response);
 				const bid = response.data.bid;
@@ -40,27 +46,56 @@ class CompareCriteria extends Component {
 			});
 	};
 
-	handleSelect2 = (prefValue) => {
-		this.setState({ pref: prefValue });
-		console.log(this.state);
-	};
-
 	handleSelect = (value, name) => {
-		this.setState({ value, name });
+		const from_to = name.split("_");
+		const score = {};
+		score.value = value;
+		score.from = from_to[0];
+		score.to = from_to[1];
+		const OldScores = this.state.scores;
+		OldScores.push(score);
+		this.setState({ scores: OldScores });
 		console.log(this.state);
 		// console.log(e);
 	};
 
 	componentDidMount() {
-		this.setState({ bid_id: this.props.match.params.bid_id });
-		this.getBidDetails();
-		console.log(this.state);
+		// 	const { match: { params } } = this.props;
+		// 	this.setState({ bid_id: params.bid_id });
+		const token = localStorage.getItem("jwtToken");
+		// Decode token to get user
+		if (token) {
+			const decoded = jwt_decode(token);
+			this.setState({ user: decoded }, () => {
+				if (this.state.user) {
+					// check if this user has a response for the bid already;
+					const { bid_id, user } = this.state;
+					const endPoint = `/api/decision/${bid_id}/${user.id}`;
+					axios.get(endPoint).then((response) => {
+						const resp = response.data;
+						console.log(resp);
+						if (resp.errors) {
+							alert("There is no response for this bid from you yet, create one now");
+							this.props.history.push("/open-bids");
+						} else {
+							// Go on
+							this.setState({ decision_id: resp.decision._id }, () => {
+								console.log(this.state);
+							});
+						}
+					});
+				}
+			});
+		} else {
+			this.props.history.push(`/login`);
+		}
 	}
 
 	componentWillMount() {
-		this.setState({ bid_id: this.props.match.params.bid_id });
-		this.getBidDetails();
-		console.log(this.state);
+		console.log(this.props.match.params.bid_id);
+		this.setState({ bid_id: this.props.match.params.bid_id }, () => {
+			this.getBidDetails();
+		});
 	}
 
 	render() {
