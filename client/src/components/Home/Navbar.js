@@ -54,7 +54,7 @@ class Navbar extends Component {
 							<Dropdown.Item href="/new-bid">Create New Bid</Dropdown.Item>
 							<Dropdown.Item href="/bids">Manage Bids</Dropdown.Item>
 							<Dropdown.Item href="/alternatives">Manage Alternatives</Dropdown.Item>
-							<Dropdown.Item href="/users">Manage Users</Dropdown.Item>
+							<Dropdown.Item href="/register">Manage Users</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
 				</Menu.Item>
