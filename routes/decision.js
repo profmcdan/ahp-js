@@ -76,41 +76,95 @@ router.post("/:bid_id/:user_id", (req, res) => {
 	});
 });
 
+router.get("/:id", (req, res) => {
+	Decision.findById(req.params.id).then((decision) => {
+		if (!decision) {
+			return res.json({ error: "Decision does not exists", statusCode: 404 });
+		}
+		return res.json({ decision });
+	});
+});
+
 // @route   POST decision
 // @desc    create new bid
 // @access  [Private]
-router.post("/:id/criteria", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.post("/add/:id/criteria", (req, res) => {
 	const { id } = req.params;
-	const { to, from, weight } = req.body;
+	const { from, to, weight } = req.body;
+
 	Decision.findById(id)
 		.then((decision) => {
 			if (!decision) {
-				return res.status(404).json({ error: "Decision does not exists" });
+				return res.json({ error: "Decision does not exists", statusCode: 404 });
 			}
-			const newResponse = {
-				to,
-				from,
-				weight
-			};
-			decision.response.criteria.unshift(newResponse);
-			decision
+
+			decision.response.criteria.push({
+				to: to.toLowerCase(),
+				from: from.toLowerCase(),
+				weight: weight
+			});
+
+			return decision
 				.save()
 				.then((decision) => {
+					//  do nothing
 					return res.json({ decision });
 				})
 				.catch((error) => {
-					return res.status(500).json({ error });
+					return res.json({ error, statusCode: 500 });
 				});
 		})
 		.catch((error) => {
-			return res.status(500).json({ error });
+			return res.json({ error, statusCode: 500 });
+		});
+});
+
+// @route   POST decision
+// @desc    create new bid
+// @access  [Private]
+router.post("/add/:id/alternative", (req, res) => {
+	const { id } = req.params;
+	const { from, to, weight } = req.body;
+
+	Decision.findById(id)
+		.then((decision) => {
+			if (!decision) {
+				return res.json({ error: "Decision does not exists", statusCode: 404 });
+			}
+
+			decision.response.alternative.push({
+				to: to.toLowerCase(),
+				from: from.toLowerCase(),
+				weight: weight
+			});
+
+			return decision
+				.save()
+				.then((decision) => {
+					//  do nothing
+					return res.json({ decision });
+				})
+				.catch((error) => {
+					return res.json({ error, statusCode: 500 });
+				});
+
+			// decision.response.criteria.unshift({ scores });
+
+			// decision.response.criteria.unshift({
+			// 	to: to.toLowerCase(),
+			// 	from: from.toLowerCase(),
+			// 	weight
+			// });
+		})
+		.catch((error) => {
+			return res.json({ error, statusCode: 500 });
 		});
 });
 
 // @route   POST decision
 // @desc    add sub-criteria resp
 // @access  [Private]
-router.post("/:id/sub-criteria", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.post("/add/:id/sub-criteria", (req, res) => {
 	const { id } = req.params;
 	const { to, from, weight, criteria_id } = req.body;
 	Decision.findById(id)
@@ -121,8 +175,8 @@ router.post("/:id/sub-criteria", passport.authenticate("jwt", { session: false }
 			const newResponse = {
 				criteria: criteria_id,
 				sub: {
-					to,
-					from,
+					to: to.toLowerCase(),
+					from: from.toLowerCase(),
 					weight
 				}
 			};
@@ -134,11 +188,11 @@ router.post("/:id/sub-criteria", passport.authenticate("jwt", { session: false }
 					return res.json({ decision });
 				})
 				.catch((error) => {
-					return res.status(500).json({ error });
+					return res.json({ error, statusCode: 500 });
 				});
 		})
 		.catch((error) => {
-			return res.status(500).json({ error });
+			return res.json({ error, statusCode: 500 });
 		});
 });
 

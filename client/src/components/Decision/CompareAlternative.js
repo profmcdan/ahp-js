@@ -18,6 +18,8 @@ class CompareAlternative extends Component {
 			subcriteria: [],
 			scores: []
 		};
+
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	getBidDetails = () => {
@@ -42,22 +44,30 @@ class CompareAlternative extends Component {
 			});
 	};
 
-	handleSelect2 = (prefValue) => {
-		this.setState({ pref: prefValue });
-		console.log(this.state);
+	cleanData = (allScores, newScore) => {
+		const index = allScores.findIndex((score) => score.to === newScore.to && score.from === newScore.from);
+		if (index < 0) {
+			allScores.push(newScore);
+		} else {
+			allScores.splice(index, 1);
+			allScores.push(newScore);
+		}
+		return allScores;
 	};
 
 	handleSelect = (value, name) => {
 		const from_to = name.split("_");
 		const score = {};
-		score.value = value;
+		score.weight = value;
 		score.from = from_to[0];
 		score.to = from_to[1];
+		if (score.to === score.from) {
+			score.value = "[1,1,1]";
+		}
 		const OldScores = this.state.scores;
-		OldScores.push(score);
-		this.setState({ scores: OldScores });
-		console.log(this.state);
-		// console.log(e);
+		// Clean scores for duplicates
+		const newScore = this.cleanData(OldScores, score);
+		this.setState({ scores: newScore });
 	};
 
 	componentDidMount() {
@@ -98,12 +108,45 @@ class CompareAlternative extends Component {
 		});
 	}
 
+	handleSubmit = (e) => {
+		e.preventDefault();
+		const { scores, decision_id } = this.state;
+		const endPoint = `/api/decision/add/${decision_id}/alternative`;
+
+		const promises = scores.map(async (score) => {
+			const formData = new FormData();
+			formData.append("to", score.to);
+			formData.append("from", score.from);
+			formData.append("weight", score.weight);
+
+			await axios
+				.post(endPoint, formData)
+				.then((response) => {
+					console.log("Comparision Submitted");
+					console.log(response.data);
+					return response.data;
+				})
+				.catch((error) => {
+					// alert(error);
+					console.log(error);
+					return error;
+				});
+		});
+		Promise.all(promises)
+			.then((result) => {
+				console.log(result);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
 	render() {
 		const { contractors } = this.state;
 		return (
 			<div class="ui fluid container">
 				<Header>Compare Alternatives</Header>
-				<Form>
+				<Form onSubmit={this.handleSubmit}>
 					{contractors.map((crt) => {
 						const filtered_alternatives = contractors.filter((value) => {
 							return value !== crt.title;

@@ -92,12 +92,46 @@ class CompareSubCriteria extends Component {
 		});
 	}
 
+	handleSubmit = (e) => {
+		e.preventDefault();
+		const { scores, decision_id, criteria_id } = this.state;
+		const endPoint = `/api/decision/add/${decision_id}/sub-criteria`;
+
+		const promises = scores.map(async (score) => {
+			const formData = new FormData();
+			formData.append("criteria_id", criteria_id);
+			formData.append("to", score.to);
+			formData.append("from", score.from);
+			formData.append("weight", score.weight);
+
+			await axios
+				.post(endPoint, formData)
+				.then((response) => {
+					console.log("Comparision Submitted");
+					console.log(response.data);
+					return response.data;
+				})
+				.catch((error) => {
+					// alert(error);
+					console.log(error);
+					return error;
+				});
+		});
+		Promise.all(promises)
+			.then((result) => {
+				console.log(result);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
 	render() {
 		const { subcriteria } = this.state;
 		return (
 			<div class="ui fluid container">
 				<Header>Compare Alternatives</Header>
-				<Form>
+				<Form onSubmit={this.handleSubmit}>
 					{subcriteria.map((crt) => {
 						const filtered = subcriteria.filter((value) => {
 							return value !== crt.title;

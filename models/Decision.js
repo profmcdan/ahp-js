@@ -35,14 +35,9 @@ const DecisionSchema = new Schema(
 			],
 			alternative: [
 				{
-					subcriteria: String,
-					alt: [
-						{
-							from: String,
-							to: String,
-							weight: String
-						}
-					]
+					from: String,
+					to: String,
+					weight: String
 				}
 			]
 		},
