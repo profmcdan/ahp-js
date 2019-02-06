@@ -42,17 +42,31 @@ class CompareSubCriteria extends Component {
 			});
 	};
 
+	cleanData = (allScores, newScore) => {
+		const index = allScores.findIndex((score) => score.to === newScore.to && score.from === newScore.from);
+		if (index < 0) {
+			allScores.push(newScore);
+		} else {
+			allScores.splice(index, 1);
+			allScores.push(newScore);
+		}
+		return allScores;
+	};
+
 	handleSelect = (value, name) => {
 		const from_to = name.split("_");
 		const score = {};
-		score.value = value;
+		score.weight = value;
 		score.from = from_to[0];
 		score.to = from_to[1];
+
+		if (score.to === score.from) {
+			score.weight = "[1,1,1]";
+		}
 		const OldScores = this.state.scores;
-		OldScores.push(score);
-		this.setState({ scores: OldScores });
-		console.log(this.state);
-		// console.log(e);
+		// Clean scores for duplicates
+		const newScore = this.cleanData(OldScores, score);
+		this.setState({ scores: newScore });
 	};
 	componentDidMount() {
 		// 	const { match: { params } } = this.props;
@@ -120,6 +134,8 @@ class CompareSubCriteria extends Component {
 		Promise.all(promises)
 			.then((result) => {
 				console.log(result);
+				alert("Submitted Successfully");
+				this.props.history.push(`/open-bids`);
 			})
 			.catch((error) => {
 				console.log(error);

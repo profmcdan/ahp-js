@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import { Header, Button, Checkbox, Icon, Table, Dropdown } from "semantic-ui-react";
 import _ from "lodash";
 import axios from "axios";
@@ -28,6 +29,13 @@ class OpenBids extends Component {
 		}
 	}
 
+	getCriteriaList = (criteriaList, bid_id) => {
+		const criteriaValues = criteriaList.map((crt) => {
+			return { text: crt.title, value: crt._id + "_" + bid_id };
+		});
+		return criteriaValues;
+	};
+
 	componentWillMount() {
 		axios
 			.get("/api/bid/opened")
@@ -39,6 +47,17 @@ class OpenBids extends Component {
 				console.log(error);
 			});
 	}
+
+	handleChange = (e, { value }) => {
+		const parameters = value.split("_");
+		const criteria_id = parameters[0],
+			bid_id = parameters[1];
+		const redirect_path = `/add-sub/${bid_id}/${criteria_id}`;
+		this.props.history.push(redirect_path);
+		// return <Redirect to={redirect_path} />;
+
+		// this.setState({ bid_id });
+	};
 
 	handleSort = (clickedColumn) => () => {
 		const { column, bids, direction } = this.state;
@@ -115,7 +134,13 @@ class OpenBids extends Component {
 										</Link>
 									</Table.Cell>
 									<Table.Cell>
-										<Dropdown placeholder="Select.." fluid selection options={bid.criteria} />
+										<Dropdown
+											placeholder="Select.."
+											fluid
+											selection
+											options={this.getCriteriaList(bid.criteria, bid._id)}
+											onChange={this.handleChange}
+										/>
 									</Table.Cell>
 								</Table.Row>
 							);

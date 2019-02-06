@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Header, Button, Icon } from "semantic-ui-react";
+import { Form, Header, Button, Icon, Modal } from "semantic-ui-react";
 import CompareInput from "./CompareInput";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
@@ -16,11 +16,38 @@ class CompareAlternative extends Component {
 			description: "",
 			criteria_id: "",
 			subcriteria: [],
-			scores: []
+			scores: [],
+			modalOpen: false
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
+
+	handleOpen = () => this.setState({ modalOpen: true });
+
+	handleClose = () => this.setState({ modalOpen: false });
+
+	renderModal = () => {
+		return (
+			<Modal
+				trigger={<Button onClick={this.handleOpen}>Success</Button>}
+				open={this.state.modalOpen}
+				onClose={this.handleClose}
+				basic
+				size="small"
+			>
+				<Header icon="browser" content="Cookies policy" />
+				<Modal.Content>
+					<h3>Record has been successfully submitted.</h3>
+				</Modal.Content>
+				<Modal.Actions>
+					<Button color="green" onClick={this.handleClose} inverted>
+						<Icon name="checkmark" /> Close
+					</Button>
+				</Modal.Actions>
+			</Modal>
+		);
+	};
 
 	getBidDetails = () => {
 		const { bid_id } = this.state;
@@ -62,7 +89,7 @@ class CompareAlternative extends Component {
 		score.from = from_to[0];
 		score.to = from_to[1];
 		if (score.to === score.from) {
-			score.value = "[1,1,1]";
+			score.weight = "[1,1,1]";
 		}
 		const OldScores = this.state.scores;
 		// Clean scores for duplicates
@@ -134,7 +161,8 @@ class CompareAlternative extends Component {
 		});
 		Promise.all(promises)
 			.then((result) => {
-				console.log(result);
+				this.renderModal();
+				this.props.history.push(`/open-bids`);
 			})
 			.catch((error) => {
 				console.log(error);

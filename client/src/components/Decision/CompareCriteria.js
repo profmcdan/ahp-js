@@ -64,7 +64,7 @@ class CompareCriteria extends Component {
 		score.from = from_to[0];
 		score.to = from_to[1];
 		if (score.to === score.from) {
-			score.value = "[1,1,1]";
+			score.weight = "[1,1,1]";
 		}
 		const OldScores = this.state.scores;
 		// Clean scores for duplicates
@@ -138,6 +138,8 @@ class CompareCriteria extends Component {
 		Promise.all(promises)
 			.then((result) => {
 				console.log(result);
+				alert("Submitted Successfully");
+				this.props.history.push(`/open-bids`);
 			})
 			.catch((error) => {
 				console.log(error);
