@@ -40,12 +40,13 @@ class Register extends Component {
 
 	handleSubmit = (e) => {
 		e.preventDefault();
-		const { email, password, username } = this.state;
+		const { email, password, username, password2 } = this.state;
 
 		const data = new FormData();
 		data.append("email", email);
 		data.append("password", password);
-		data.append("username", username);
+		data.append("password2", password2);
+		data.append("name", username);
 
 		axios
 			.post(`/api/auth/register`, data)
@@ -56,7 +57,7 @@ class Register extends Component {
 				} else {
 					console.log(response.data);
 					alert("Registration Successful");
-					this.props.history.push(`/`);
+					this.props.history.push(`/login`);
 				}
 			})
 			.then((error) => {
@@ -71,7 +72,7 @@ class Register extends Component {
 				<div class="four wide column" />
 				<div class="eight wide column">
 					<Header>Register In</Header>
-					<Form>
+					<Form onSubmit={this.handleSubmit}>
 						<Form.Field>
 							<input
 								label="Full Name"

@@ -117,6 +117,12 @@ class Login extends Component {
 							Log in
 						</Button>
 					</Form>
+					<p className="ui p">
+						Not yet a user?{" "}
+						<a href="/register" className="ui button">
+							Register
+						</a>
+					</p>
 				</div>
 			</div>
 		);
