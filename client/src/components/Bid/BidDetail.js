@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Header, Button, Checkbox, Icon, Card } from "semantic-ui-react";
 import axios from "axios";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 class BidDetail extends Component {
 	constructor(props) {
@@ -33,6 +35,76 @@ class BidDetail extends Component {
 		this.setState({ bid_id: this.props.match.params.id });
 		// this.getBidDetails();
 	}
+
+	deleteCriteria = (id) => {
+		const { bid_id } = this.state;
+		confirmAlert({
+			title: "Confirm Delete",
+			message: "Are you sure you want to delete this Criteria.",
+			buttons: [
+				{
+					label: "Yes",
+					onClick: () => {
+						axios
+							.delete(`/api/bid/${bid_id}/criteria/${id}`)
+							.then((response) => {
+								// slice it off from the state
+								const { criteria } = this.state;
+								for (var i = 0; i < criteria.length; i++) {
+									if (criteria[i]._id === id) {
+										criteria.splice(i, 1);
+										break;
+									}
+								}
+								this.setState({ criteria: criteria });
+							})
+							.catch((error) => {
+								console.log(error);
+							});
+					}
+				},
+				{
+					label: "No"
+					// onClick: () => alert("Click No")
+				}
+			]
+		});
+	};
+
+	deleteAlternative = (id) => {
+		const { bid_id } = this.state;
+		confirmAlert({
+			title: "Confirm Delete",
+			message: "Are you sure you want to delete this Alternative.",
+			buttons: [
+				{
+					label: "Yes",
+					onClick: () => {
+						axios
+							.delete(`/api/bid/${bid_id}/contractor/${id}`)
+							.then((response) => {
+								// slice it off from the state
+								const { contractors } = this.state;
+								for (var i = 0; i < contractors.length; i++) {
+									if (contractors[i]._id === id) {
+										contractors.splice(i, 1);
+										break;
+									}
+								}
+								this.setState({ contractors: contractors });
+							})
+							.catch((error) => {
+								console.log(error);
+							});
+					}
+				},
+				{
+					label: "No"
+					// onClick: () => alert("Click No")
+				}
+			]
+		});
+	};
 
 	render() {
 		const { bid, bid_id, criteria, contractors } = this.state;
@@ -67,6 +139,16 @@ class BidDetail extends Component {
 											<Card.Meta>{crt.subcriteria.length} sub-criteria</Card.Meta>
 											<Card.Description>{crt.description}</Card.Description>
 										</Card.Content>
+										<Card.Meta>
+											<button
+												className="ui red icon button"
+												onClick={() => this.deleteCriteria(crt._id)}
+												data-tooltip="Delete this criteria"
+											>
+												{" "}
+												<Icon name="delete" size="large" />{" "}
+											</button>
+										</Card.Meta>
 									</Card>
 								);
 							})}
@@ -96,6 +178,16 @@ class BidDetail extends Component {
 											</Card.Meta>
 											<Card.Description>{crt.address}</Card.Description>
 										</Card.Content>
+										<Card.Meta>
+											<button
+												className="ui red icon button"
+												onClick={() => this.deleteAlternative(crt._id)}
+												data-tooltip="Delete this alternative"
+											>
+												{" "}
+												<Icon name="delete" size="large" />{" "}
+											</button>
+										</Card.Meta>
 									</Card>
 								);
 							})}

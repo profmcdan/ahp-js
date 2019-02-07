@@ -198,7 +198,7 @@ router.post("/:id/contractor", (req, res) => {
 	Bid.findById(id)
 		.then((bid) => {
 			if (!bid) {
-				return res.status(404).json({ error: "No bid found with that ID" });
+				return res.json({ error: "No bid found with that ID", statusCode: 404 });
 			}
 			bid.contractors.unshift({ name, phone, email, address, bid_price });
 			bid
@@ -212,8 +212,96 @@ router.post("/:id/contractor", (req, res) => {
 				});
 		})
 		.catch((err) =>
-			res.status(500).json({
-				error
+			res.json({
+				error,
+				statusCode: 500
+			})
+		);
+});
+
+// @route   DELETE
+// @desc    delete contractor
+// @access  [Private]
+router.delete("/:id/contractor/:contractor_id", (req, res) => {
+	const { id, contractor_id } = req.params;
+	Bid.findById(id)
+		.then((bid) => {
+			if (!bid) {
+				return res.json({ error: "No bid found with that ID", statusCode: 404 });
+			}
+			bid.contractors.id(contractor_id).remove();
+			bid
+				.save()
+				.then((bid) => {
+					return res.status(201).json({ bid });
+				})
+				.catch((error) => {
+					console.log(error);
+					return res.status(500).json({ error });
+				});
+		})
+		.catch((err) =>
+			res.json({
+				error,
+				statusCode: 500
+			})
+		);
+});
+
+// @route   DELETE
+// @desc    delete criteria
+// @access  [Private]
+router.delete("/:id/criteria/:criteria_id", (req, res) => {
+	const { id, criteria_id } = req.params;
+	Bid.findById(id)
+		.then((bid) => {
+			if (!bid) {
+				return res.json({ error: "No bid found with that ID", statusCode: 404 });
+			}
+			bid.criteria.id(criteria_id).remove();
+			bid
+				.save()
+				.then((bid) => {
+					return res.status(201).json({ bid });
+				})
+				.catch((error) => {
+					console.log(error);
+					return res.status(500).json({ error });
+				});
+		})
+		.catch((err) =>
+			res.json({
+				error,
+				statusCode: 500
+			})
+		);
+});
+
+// @route   DELETE
+// @desc    delete sub-criteria
+// @access  [Private]
+router.delete("/:id/criteria/:criteria_id/sub/:sub_id", (req, res) => {
+	const { id, criteria_id, sub_id } = req.params;
+	Bid.findById(id)
+		.then((bid) => {
+			if (!bid) {
+				return res.json({ error: "No bid found with that ID", statusCode: 404 });
+			}
+			bid.criteria.id(criteria_id).subcriteria.id(sub_id).remove();
+			bid
+				.save()
+				.then((bid) => {
+					return res.status(201).json({ bid });
+				})
+				.catch((error) => {
+					console.log(error);
+					return res.status(500).json({ error });
+				});
+		})
+		.catch((err) =>
+			res.json({
+				error,
+				statusCode: 500
 			})
 		);
 });

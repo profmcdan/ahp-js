@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Input, Form, Header, Image, List } from "semantic-ui-react";
+import { Input, Form, Header, Image, List, Icon } from "semantic-ui-react";
 import axios from "axios";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 class AddSubCriteria extends Component {
 	constructor(props) {
@@ -88,6 +90,40 @@ class AddSubCriteria extends Component {
 			});
 	};
 
+	deleteSubCriteria = (id) => {
+		const { bid_id, criteria_id, subcriteria } = this.state;
+		confirmAlert({
+			title: "Confirm Delete",
+			message: "Are you sure you want to delete this Alternative.",
+			buttons: [
+				{
+					label: "Yes",
+					onClick: () => {
+						axios
+							.delete(`/api/bid/${bid_id}/criteria/${criteria_id}/sub/${id}`)
+							.then((response) => {
+								// slice it off from the state
+								for (var i = 0; i < subcriteria.length; i++) {
+									if (subcriteria[i]._id === id) {
+										subcriteria.splice(i, 1);
+										break;
+									}
+								}
+								this.setState({ subcriteria: subcriteria });
+							})
+							.catch((error) => {
+								console.log(error);
+							});
+					}
+				},
+				{
+					label: "No"
+					// onClick: () => alert("Click No")
+				}
+			]
+		});
+	};
+
 	render() {
 		const { title, description, subcriteria, the_criteria } = this.state;
 		return (
@@ -98,13 +134,23 @@ class AddSubCriteria extends Component {
 					</Header>
 					<div className="ui segment">
 						<List animated verticalAlign="middle">
-							{subcriteria.map((sub) => { 
+							{subcriteria.map((sub) => {
 								return (
 									<List.Item key={sub._id}>
-										<Image avatar src="https://react.semantic-ui.com/images/avatar/small/helen.jpg" />
+										<List.Icon name="algolia" />
 
 										<List.Content>
-											<List.Header>{sub.title}</List.Header>
+											<List.Header>
+												{sub.title}{" "}
+												<span
+													className="ui icon button"
+													onClick={() => this.deleteSubCriteria(sub._id)}
+													data-tooltip="Delete this criteria"
+												>
+													{" "}
+													<Icon name="delete" size="small" />{" "}
+												</span>
+											</List.Header>
 										</List.Content>
 									</List.Item>
 								);
