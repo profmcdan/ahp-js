@@ -112,49 +112,49 @@ class CompareSubCriteria extends Component {
 		const endPoint = `/api/decision/add/${decision_id}/sub-criteria`;
 		const jsonScores = JSON.stringify(scores);
 
-		const formData = new FormData();
-		formData.append("criteria_id", criteria_id);
-		formData.append("scores", jsonScores);
+		// const formData = new FormData();
+		// formData.append("criteria_id", criteria_id);
+		// formData.append("scores", jsonScores);
 
-		axios
-			.post(endPoint, formData)
-			.then((response) => {
-				alert("Submitted Successfully");
-				this.props.history.push(`/open-bids`);
-			})
-			.catch((error) => {
-				// alert(error);
-				console.log(error);
-				return error;
-			});
-
-		// const promises = scores.map(async (score) => {
-		// 	const formData = new FormData();
-		// 	formData.append("criteria_id", criteria_id);
-		// 	formData.append("to", score.to);
-		// 	formData.append("from", score.from);
-		// 	formData.append("weight", score.weight);
-
-		// 	await axios
-		// 		.post(endPoint, formData)
-		// 		.then((response) => {
-		// 			return response.data;
-		// 		})
-		// 		.catch((error) => {
-		// 			// alert(error);
-		// 			console.log(error);
-		// 			return error;
-		// 		});
-		// });
-		// Promise.all(promises)
-		// 	.then((result) => {
-		// 		console.log(result);
+		// axios
+		// 	.post(endPoint, formData)
+		// 	.then((response) => {
 		// 		alert("Submitted Successfully");
 		// 		this.props.history.push(`/open-bids`);
 		// 	})
 		// 	.catch((error) => {
+		// 		// alert(error);
 		// 		console.log(error);
+		// 		return error;
 		// 	});
+
+		const promises = scores.map(async (score) => {
+			const formData = new FormData();
+			formData.append("criteria_id", criteria_id);
+			formData.append("to", score.to);
+			formData.append("from", score.from);
+			formData.append("weight", score.weight);
+
+			await axios
+				.post(endPoint, formData)
+				.then((response) => {
+					return response.data;
+				})
+				.catch((error) => {
+					// alert(error);
+					console.log(error);
+					return error;
+				});
+		});
+		Promise.all(promises)
+			.then((result) => {
+				console.log(result);
+				alert("Submitted Successfully");
+				this.props.history.push(`/open-bids`);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	render() {
