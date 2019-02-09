@@ -10,11 +10,13 @@ class CompareAlternative extends Component {
 		super();
 		this.state = {
 			bid_id: "",
+			sub_name: "",
 			contractors: [],
 			bid: null,
 			pref: "",
 			description: "",
 			criteria_id: "",
+			subcriteria_id: "",
 			subcriteria: [],
 			scores: [],
 			modalOpen: false
@@ -49,6 +51,27 @@ class CompareAlternative extends Component {
 		);
 	};
 
+	getSubCriteriaName = () => {
+		const { bid, subcriteria_id } = this.state;
+		const finalList = [];
+		let sub_name = "";
+		console.log(bid);
+
+		bid.criteria.map((criteria) => {
+			return criteria.subcriteria.map((subC) => {
+				const tempSub = { text: subC.title, value: subC._id };
+				finalList.push(tempSub);
+				if (subC._id === subcriteria_id) {
+					sub_name = tempSub.text;
+					this.setState({ sub_name: sub_name });
+				}
+				return null;
+			});
+		});
+		console.log(finalList);
+		return finalList;
+	};
+
 	getBidDetails = () => {
 		const { bid_id } = this.state;
 		console.log(bid_id);
@@ -60,11 +83,16 @@ class CompareAlternative extends Component {
 				const contractors = bid.contractors;
 				// const the_criteria = criteria.find((crt) => crt._id === criteria_id);
 				// console.log(the_criteria);
-				this.setState({
-					bid: bid,
-					contractors
-				});
-				console.log(this.state);
+				this.setState(
+					{
+						bid: bid,
+						contractors
+					},
+					() => {
+						this.getSubCriteriaName();
+						console.log(this.state);
+					}
+				);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -130,15 +158,19 @@ class CompareAlternative extends Component {
 	}
 
 	componentWillMount() {
-		this.setState({ bid_id: this.props.match.params.bid_id }, () => {
-			this.getBidDetails();
-		});
+		this.setState(
+			{ bid_id: this.props.match.params.bid_id, subcriteria_id: this.props.match.params.subcriteria_id },
+			() => {
+				this.getBidDetails();
+				console.log(this.state);
+			}
+		);
 	}
 
 	handleSubmit = (e) => {
 		e.preventDefault();
-		const { scores, decision_id } = this.state;
-		const endPoint = `/api/decision/add/${decision_id}/alternative`;
+		const { scores, decision_id, subcriteria_id } = this.state;
+		const endPoint = `/api/decision/add/${decision_id}/alternative/${subcriteria_id}`;
 
 		const promises = scores.map(async (score) => {
 			const formData = new FormData();
@@ -170,10 +202,11 @@ class CompareAlternative extends Component {
 	};
 
 	render() {
-		const { contractors } = this.state;
+		const { contractors, sub_name } = this.state;
 		return (
 			<div class="ui fluid container">
 				<Header>Compare Alternatives</Header>
+				<Header>{sub_name}</Header>
 				<Form onSubmit={this.handleSubmit}>
 					{contractors.map((crt) => {
 						const filtered_alternatives = contractors.filter((value) => {

@@ -122,8 +122,8 @@ router.post("/add/:id/criteria", (req, res) => {
 // @route   POST decision
 // @desc    create new bid
 // @access  [Private]
-router.post("/add/:id/alternative", (req, res) => {
-	const { id } = req.params;
+router.post("/add/:id/alternative/:sub_id", (req, res) => {
+	const { id, sub_id } = req.params;
 	const { from, to, weight } = req.body;
 
 	Decision.findById(id)
@@ -132,11 +132,16 @@ router.post("/add/:id/alternative", (req, res) => {
 				return res.json({ error: "Decision does not exists", statusCode: 404 });
 			}
 
-			decision.response.alternative.push({
-				to: to.toLowerCase(),
-				from: from.toLowerCase(),
-				weight: weight
-			});
+			const newResponse = {
+				criteria: sub_id,
+				subcriteria: {
+					to: to.toLowerCase(),
+					from: from.toLowerCase(),
+					weight
+				}
+			};
+
+			decision.response.alternative.push(newResponse);
 
 			return decision
 				.save()
@@ -181,7 +186,7 @@ router.post("/add/:id/sub-criteria", (req, res) => {
 				}
 			};
 
-			decision.response.subcriteria.unshift(newResponse);
+			decision.response.subcriteria.push(newResponse);
 			decision
 				.save()
 				.then((decision) => {

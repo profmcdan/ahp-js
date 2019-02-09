@@ -121,4 +121,14 @@ router.get("/me", passport.authenticate("jwt", { session: false }), (req, res) =
 	});
 });
 
+router.get("/users", (req, res) => {
+	User.find()
+		.then((users) => {
+			return res.json({ users: users });
+		})
+		.catch((error) => {
+			return res.json({ error, statusCode: 500 });
+		});
+});
+
 module.exports = router;

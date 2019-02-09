@@ -40,7 +40,7 @@ class App extends Component {
 						<Route exact path="/update-alternative" component={EditAlternative} />
 
 						<Route exact path="/decision-criteria/:bid_id" component={CompareCriteria} />
-						<Route exact path="/decision-alternative/:bid_id" component={CompareAlternative} />
+						<Route exact path="/add-alt/:bid_id/:criteria_id/sub/:subcriteria_id" component={CompareAlternative} />
 						<Route exact path="/add-sub/:bid_id/:criteria_id" component={CompareSubCriteria} />
 
 						<Route exact path="/bids" component={Bids} />

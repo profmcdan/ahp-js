@@ -36,6 +36,23 @@ class OpenBids extends Component {
 		return criteriaValues;
 	};
 
+	getSubCriteriaList = (bid_id) => {
+		const { bids } = this.state;
+		const finalList = [];
+		const bid = bids.find((bid) => {
+			return bid._id === bid_id;
+		});
+		bid.criteria.map((criteria) => {
+			return criteria.subcriteria.map((subC) => {
+				const tempSub = { text: subC.title, value: subC._id + "_" + criteria._id + "_" + bid_id };
+				finalList.push(tempSub);
+				return null;
+			});
+		});
+		console.log(finalList);
+		return finalList;
+	};
+
 	componentWillMount() {
 		axios
 			.get("/api/bid/opened")
@@ -57,6 +74,15 @@ class OpenBids extends Component {
 		// return <Redirect to={redirect_path} />;
 
 		// this.setState({ bid_id });
+	};
+
+	handleAltChange = (e, { value }) => {
+		const parameters = value.split("_");
+		const subcriteria_id = parameters[0],
+			criteria_id = parameters[1],
+			bid_id = parameters[2];
+		const redirect_path = `/add-alt/${bid_id}/${criteria_id}/sub/${subcriteria_id}`;
+		this.props.history.push(redirect_path);
 	};
 
 	handleSort = (clickedColumn) => () => {
@@ -105,8 +131,8 @@ class OpenBids extends Component {
 							<Table.HeaderCell>Description</Table.HeaderCell>
 							<Table.HeaderCell>Start Response</Table.HeaderCell>
 							<Table.HeaderCell>Criteria</Table.HeaderCell>
-							<Table.HeaderCell>Alternatives</Table.HeaderCell>
 							<Table.HeaderCell>Sub-Criteria</Table.HeaderCell>
+							<Table.HeaderCell>Alternatives</Table.HeaderCell>
 						</Table.Row>
 					</Table.Header>
 					<Table.Body>
@@ -129,17 +155,21 @@ class OpenBids extends Component {
 										</Link>
 									</Table.Cell>
 									<Table.Cell>
-										<Link to={"/decision-alternative/" + bid._id}>
-											<Icon name="resolving" /> Compare
-										</Link>
-									</Table.Cell>
-									<Table.Cell>
 										<Dropdown
 											placeholder="Select.."
 											fluid
 											selection
 											options={this.getCriteriaList(bid.criteria, bid._id)}
 											onChange={this.handleChange}
+										/>
+									</Table.Cell>
+									<Table.Cell>
+										<Dropdown
+											placeholder="Select.."
+											fluid
+											selection
+											options={this.getSubCriteriaList(bid._id)}
+											onChange={this.handleAltChange}
 										/>
 									</Table.Cell>
 								</Table.Row>
