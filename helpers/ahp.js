@@ -222,7 +222,7 @@ class AHP {
 			if (sb_local_weight[0][1] == "Acceptable") {
 				let eigenvector = sb_local_weight[1];
 				let sb_weights = [];
-				eigenvector.forEach(function(eig) {
+				eigenvector.map((eig) => {
 					sb_weights.push(eig * criterial_weights[crt]);
 				});
 			} else {

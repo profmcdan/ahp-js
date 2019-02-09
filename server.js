@@ -23,6 +23,7 @@ const usersRoute = require("./routes/user");
 const bidsRoute = require("./routes/bid");
 const contractorRoute = require("./routes/contractor");
 const decisionRoute = require("./routes/decision");
+const computeRoute = require("./routes/compute");
 
 mongoose
 	.connect(config.DB, { useNewUrlParser: true })
@@ -50,6 +51,7 @@ app.use("/api/auth", usersRoute);
 app.use("/api/bid", bidsRoute);
 app.use("/api/alternative", contractorRoute);
 app.use("/api/decision", decisionRoute);
+app.use("/api/compute", computeRoute);
 
 app.get("*", (req, res) => {
 	res.sendFile(path.join(__dirname, "client", "build", "index.html"));
