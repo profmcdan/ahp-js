@@ -8,6 +8,7 @@ class NewBid extends Component {
 		this.state = {
 			name: "",
 			description: "",
+			bid_price: "",
 			loaded: 0
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,11 +27,12 @@ class NewBid extends Component {
 
 	handleSubmit = (e) => {
 		e.preventDefault();
-		const { name, description } = this.state;
+		const { name, description, bid_price } = this.state;
 
 		const data = new FormData();
 		data.append("name", name);
 		data.append("description", description);
+		data.append("bid_price", bid_price);
 
 		axios
 			.post(`/api/bid`, data)
@@ -73,6 +75,18 @@ class NewBid extends Component {
 								success="right"
 								name="description"
 								value={this.state.description}
+								onChange={this.handleChange}
+							/>
+						</Form.Field>
+						<Form.Field>
+							<input
+								label="Bid Price"
+								placeholder="Enter the estimated price for this bid"
+								type="text"
+								error="wrong"
+								success="right"
+								name="bid_price"
+								value={this.state.bid_price}
 								onChange={this.handleChange}
 							/>
 						</Form.Field>

@@ -9,6 +9,7 @@ const BidSchema = new Schema(
 		},
 		name: { type: String, required: true },
 		description: { type: String, required: true },
+		bid_price: String,
 		slog: String,
 		activated: { type: Boolean, default: false },
 		closed: { type: Boolean, default: false },
@@ -38,7 +39,7 @@ const BidSchema = new Schema(
 				name: { type: String },
 				email: { type: String },
 				phone: { type: String },
-				address: { type: String },
+				price: String,
 				documents: [
 					{
 						file_title: { type: String, required: true },

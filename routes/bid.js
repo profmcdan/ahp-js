@@ -83,8 +83,8 @@ router.get("/:id", (req, res) => {
 // @desc    create new bid
 // @access  [Private]
 router.post("/", (req, res) => {
-	const { name, description } = req.body;
-	const newBid = new Bid({ name, description });
+	const { name, description, bid_price } = req.body;
+	const newBid = new Bid({ name, description, bid_price });
 	newBid
 		.save()
 		.then((bid) => {
@@ -204,11 +204,11 @@ router.post("/:id/contractor", (req, res) => {
 			bid
 				.save()
 				.then((bid) => {
-					return res.status(201).json({ bid });
+					return res.json({ bid });
 				})
 				.catch((error) => {
 					console.log(error);
-					return res.status(500).json({ error });
+					return res.json({ error, status: 500 });
 				});
 		})
 		.catch((err) =>

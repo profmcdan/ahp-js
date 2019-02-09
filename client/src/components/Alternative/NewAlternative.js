@@ -12,7 +12,8 @@ class NewAlternative extends Component {
 			name: "",
 			email: "",
 			phone: "",
-			address: ""
+			address: "",
+			bid_price: ""
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,12 +40,13 @@ class NewAlternative extends Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		const { name, email, phone, address, bid_id } = this.state;
+		const { name, email, phone, address, bid_id, bid_price } = this.state;
 		const data = new FormData();
 		data.append("name", name);
 		data.append("email", email);
 		data.append("phone", phone);
 		data.append("address", address);
+		data.append("bid_price", bid_price);
 
 		Axios.post(`/api/bid/${bid_id}/contractor`, data)
 			.then((response) => {
@@ -57,7 +59,7 @@ class NewAlternative extends Component {
 	};
 
 	render() {
-		const { name, email, phone, address } = this.state;
+		const { name, email, phone, address, bid_price } = this.state;
 		return (
 			<div className="ui container grid">
 				<div className="four wide column" />
@@ -110,6 +112,18 @@ class NewAlternative extends Component {
 								onChange={this.handleChange}
 								placeholder="Office/Home Address"
 								value={address}
+							/>
+						</Form.Field>
+						<Form.Field>
+							<Input
+								label="Bid Price"
+								type="text"
+								error="wrong"
+								success="right"
+								name="bid_price"
+								onChange={this.handleChange}
+								placeholder="Enter the proposed price for this alternative"
+								value={bid_price}
 							/>
 						</Form.Field>
 						<Button primary type="submit">
