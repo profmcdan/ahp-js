@@ -191,7 +191,7 @@ class AHP {
 		const eigenvector = this.eigen(M_norm);
 		// Consistency Ratio
 		const consis_ratio = this.get_consistency_ratio(eigenvector);
-		return [ consis_ratio, eigenvector ];
+		return { consis_ratio, eigenvector };
 	}
 
 	evaluate_alternative(SB_ALTERNATIVE) {
@@ -209,19 +209,19 @@ class AHP {
 		const eigenvector = this.eigen(M_norm);
 		// Consistency Ratio
 		const consis_ratio = this.get_consistency_ratio(eigenvector);
-		return [ consis_ratio, eigenvector ];
+		return { consis_ratio, eigenvector };
 	}
 
 	get_global_weight() {
 		let criterial_weights = this.evaluate_criteria();
-		criterial_weights = criterial_weights[1];
+		criterial_weights = criterial_weights.eigenvector;
 		let globalWeights = [];
 		let numOfCriteria = this.A.length;
 		for (let crt = 0; crt < numOfCriteria; crt++) {
+			let sb_weights = [];
 			let sb_local_weight = this.evaluate_subcriteria(crt);
-			if (sb_local_weight[0][1] == "Acceptable") {
-				let eigenvector = sb_local_weight[1];
-				let sb_weights = [];
+			if (sb_local_weight.consis_ratio.status == "Acceptable") {
+				let eigenvector = sb_local_weight.eigenvector;
 				eigenvector.map((eig) => {
 					sb_weights.push(eig * criterial_weights[crt]);
 				});
@@ -255,6 +255,7 @@ class AHP {
 		// heck this
 		// alternative_local_weights = [[] for i in range(0,
 		//     len(self.evaluate_alternative(self.ALTERNATIVE[0])[1]))]
+		console.log(this.ALTERNATIVE.length);
 		this.ALTERNATIVE.forEach(function(alt_mat) {
 			alt_local_weights = this.evaluate_alternative(alt_mat);
 			alt_local_weights = alt_local_weights[1];
