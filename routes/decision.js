@@ -133,8 +133,8 @@ router.post("/add/:id/alternative/:sub_id", (req, res) => {
 			}
 
 			const newResponse = {
-				criteria: sub_id,
-				subcriteria: {
+				subcriteria: sub_id,
+				alt: {
 					to: to.toLowerCase(),
 					from: from.toLowerCase(),
 					weight

@@ -55,7 +55,7 @@ class CompareAlternative extends Component {
 		const { bid, subcriteria_id } = this.state;
 		const finalList = [];
 		let sub_name = "";
-		console.log(bid);
+		// console.log(bid);
 
 		bid.criteria.map((criteria) => {
 			return criteria.subcriteria.map((subC) => {
@@ -68,17 +68,17 @@ class CompareAlternative extends Component {
 				return null;
 			});
 		});
-		console.log(finalList);
+		// console.log(finalList);
 		return finalList;
 	};
 
 	getBidDetails = () => {
 		const { bid_id } = this.state;
-		console.log(bid_id);
+		// console.log(bid_id);
 		axios
 			.get(`/api/bid/${bid_id}`)
 			.then((response) => {
-				console.log(response);
+				// console.log(response);
 				const bid = response.data.bid;
 				const contractors = bid.contractors;
 				// const the_criteria = criteria.find((crt) => crt._id === criteria_id);
@@ -90,7 +90,7 @@ class CompareAlternative extends Component {
 					},
 					() => {
 						this.getSubCriteriaName();
-						console.log(this.state);
+						// console.log(this.state);
 					}
 				);
 			})
@@ -139,14 +139,14 @@ class CompareAlternative extends Component {
 					const endPoint = `/api/decision/${bid_id}/${user.id}`;
 					axios.get(endPoint).then((response) => {
 						const resp = response.data;
-						console.log(resp);
+						// console.log(resp);
 						if (resp.errors) {
 							alert("There is no response for this bid from you yet, create one now");
 							this.props.history.push("/open-bids");
 						} else {
 							// Go on
 							this.setState({ decision_id: resp.decision._id }, () => {
-								console.log(this.state);
+								// console.log(this.state);
 							});
 						}
 					});
@@ -162,7 +162,6 @@ class CompareAlternative extends Component {
 			{ bid_id: this.props.match.params.bid_id, subcriteria_id: this.props.match.params.subcriteria_id },
 			() => {
 				this.getBidDetails();
-				console.log(this.state);
 			}
 		);
 	}
@@ -181,8 +180,6 @@ class CompareAlternative extends Component {
 			await axios
 				.post(endPoint, formData)
 				.then((response) => {
-					console.log("Comparision Submitted");
-					console.log(response.data);
 					return response.data;
 				})
 				.catch((error) => {
