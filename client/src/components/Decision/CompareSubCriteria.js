@@ -110,36 +110,51 @@ class CompareSubCriteria extends Component {
 		e.preventDefault();
 		const { scores, decision_id, criteria_id } = this.state;
 		const endPoint = `/api/decision/add/${decision_id}/sub-criteria`;
+		const jsonScores = JSON.stringify(scores);
 
-		const promises = scores.map(async (score) => {
-			const formData = new FormData();
-			formData.append("criteria_id", criteria_id);
-			formData.append("to", score.to);
-			formData.append("from", score.from);
-			formData.append("weight", score.weight);
+		const formData = new FormData();
+		formData.append("criteria_id", criteria_id);
+		formData.append("scores", jsonScores);
 
-			await axios
-				.post(endPoint, formData)
-				.then((response) => {
-					console.log("Comparision Submitted");
-					console.log(response.data);
-					return response.data;
-				})
-				.catch((error) => {
-					// alert(error);
-					console.log(error);
-					return error;
-				});
-		});
-		Promise.all(promises)
-			.then((result) => {
-				console.log(result);
+		axios
+			.post(endPoint, formData)
+			.then((response) => {
 				alert("Submitted Successfully");
 				this.props.history.push(`/open-bids`);
 			})
 			.catch((error) => {
+				// alert(error);
 				console.log(error);
+				return error;
 			});
+
+		// const promises = scores.map(async (score) => {
+		// 	const formData = new FormData();
+		// 	formData.append("criteria_id", criteria_id);
+		// 	formData.append("to", score.to);
+		// 	formData.append("from", score.from);
+		// 	formData.append("weight", score.weight);
+
+		// 	await axios
+		// 		.post(endPoint, formData)
+		// 		.then((response) => {
+		// 			return response.data;
+		// 		})
+		// 		.catch((error) => {
+		// 			// alert(error);
+		// 			console.log(error);
+		// 			return error;
+		// 		});
+		// });
+		// Promise.all(promises)
+		// 	.then((result) => {
+		// 		console.log(result);
+		// 		alert("Submitted Successfully");
+		// 		this.props.history.push(`/open-bids`);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(error);
+		// 	});
 	};
 
 	render() {

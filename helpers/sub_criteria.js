@@ -29,20 +29,23 @@ const getSubCriteriaMatrix = (bid_response) => {
 		const temp_subcriteria = subcriteria.filter((value) => {
 			return value.criteria === uniqCrit;
 		});
+
 		uniqueSubCriteria.map((rowCrit) => {
 			const crt_table = [];
 			uniqueSubCriteria.map((colCrit) => {
-				temp_subcriteria.map((crt) => {
-					if (crt.sub.from === rowCrit && crt.sub.to === colCrit) {
-						crt_table.push(getArrayFrom(crt.sub.weight));
-					}
+				const temp = temp_subcriteria.find((crt) => {
+					return crt.sub.from === rowCrit && crt.sub.to === colCrit;
 				});
+				if (temp) {
+					crt_table.push(getArrayFrom(temp.sub.weight));
+				}
 			});
-			criteria_matrix.push(crt_table);
+			if (crt_table.length > 0) {
+				criteria_matrix.push(crt_table);
+			}
 		});
 		sub_criteria_matrix.push(criteria_matrix);
 	});
-	console.log(sub_criteria_matrix);
 	return sub_criteria_matrix;
 };
 

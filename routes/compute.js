@@ -31,8 +31,8 @@ router.get("/criteria/:bid_id/user/:user_id", (req, res) => {
 			const sub_criteria_matrix = getSubCriteriaMatrix(decision);
 			// console.log(criteria_matrix);
 			const ahpModel = new AHP(criteria_matrix);
-			// console.log(ahpModel.evaluate_criteria());
-			// console.log(sub_criteria_matrix);
+			console.log(ahpModel.evaluate_criteria());
+			console.log(sub_criteria_matrix[0]);
 			return res.json({ criteria_matrix, sub_criteria_matrix });
 		})
 		.catch((error) => {

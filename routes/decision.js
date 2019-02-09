@@ -169,7 +169,7 @@ router.post("/add/:id/alternative/:sub_id", (req, res) => {
 // @route   POST decision
 // @desc    add sub-criteria resp
 // @access  [Private]
-router.post("/add/:id/sub-criteria", (req, res) => {
+router.post("/add-single/:id/sub-criteria", (req, res) => {
 	const { id } = req.params;
 	const { to, from, weight, criteria_id } = req.body;
 	Decision.findById(id)
@@ -189,6 +189,47 @@ router.post("/add/:id/sub-criteria", (req, res) => {
 			decision.response.subcriteria.push(newResponse);
 			decision
 				.save()
+				.then((decision) => {
+					return res.json({ decision });
+				})
+				.catch((error) => {
+					return res.json({ error, statusCode: 500 });
+				});
+		})
+		.catch((error) => {
+			return res.json({ error, statusCode: 500 });
+		});
+});
+
+router.post("/add/:id/sub-criteria", (req, res) => {
+	const { id } = req.params;
+	const { scores, criteria_id } = req.body;
+	console.log(scores);
+	Decision.findById(id)
+		.then((decision) => {
+			if (!decision) {
+				return res.status(404).json({ error: "Decision does not exists" });
+			}
+			const promise = scores.map(async (score) => {
+				const newResponse = {
+					criteria: criteria_id,
+					sub: {
+						to: score.to.toLowerCase(),
+						from: score.from.toLowerCase(),
+						weight: score.weight
+					}
+				};
+				decision.response.subcriteria.push(newResponse);
+				await decision
+					.save()
+					.then((decision) => {
+						return decision;
+					})
+					.catch((error) => {
+						return res.json({ error, statusCode: 500 });
+					});
+			});
+			Promise.all(promise)
 				.then((decision) => {
 					return res.json({ decision });
 				})
