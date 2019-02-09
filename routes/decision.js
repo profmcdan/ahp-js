@@ -13,7 +13,7 @@ const Bid = require("../models/Bid");
 // @route   GET api/decision
 // @desc    Get all decisions
 // @access  Private
-router.get("/", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.get("/", (req, res) => {
 	let errors = {};
 	Decision.find()
 		.then((decisions) => {

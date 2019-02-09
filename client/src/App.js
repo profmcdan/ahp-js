@@ -21,6 +21,7 @@ import CompareCriteria from "./components/Decision/CompareCriteria";
 import CompareAlternative from "./components/Decision/CompareAlternative";
 import BidDetails from "./components/Bid/BidDetails-User";
 import CompareSubCriteria from "./components/Decision/CompareSubCriteria";
+import BidResult from "./components/Bid/BidResult";
 
 class App extends Component {
 	render() {
@@ -45,6 +46,7 @@ class App extends Component {
 
 						<Route exact path="/bids" component={Bids} />
 						<Route exact path="/bid/:id" component={BidDetail} />
+						<Route exact path="/bid/result/:id" component={BidResult} />
 						<Route exact path="/bid-user/:id" component={BidDetails} />
 						<Route exact path="/bid/:bid_id/:criteria_id" component={AddSubCriteria} />
 						<Route exact path="/alt/:bid_id/:contractor_id" component={EditAlternative} />

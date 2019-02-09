@@ -96,6 +96,7 @@ class Bids extends Component {
 							</Table.HeaderCell>
 							<Table.HeaderCell>Description</Table.HeaderCell>
 							<Table.HeaderCell>Edit</Table.HeaderCell>
+							<Table.HeaderCell>Result</Table.HeaderCell>
 							<Table.HeaderCell>Delete</Table.HeaderCell>
 						</Table.Row>
 					</Table.Header>
@@ -113,6 +114,11 @@ class Bids extends Component {
 									<Table.Cell>
 										<Link to={"/bid/edit/" + bid._id} className="ui icon button">
 											<Icon name="edit" />
+										</Link>
+									</Table.Cell>
+									<Table.Cell>
+										<Link to={"/bid/result/" + bid._id} className="ui icon button">
+											<Icon name="registered" />
 										</Link>
 									</Table.Cell>
 									<Table.Cell>

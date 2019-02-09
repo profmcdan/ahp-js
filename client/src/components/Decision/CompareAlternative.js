@@ -193,11 +193,12 @@ class CompareAlternative extends Component {
 		});
 		Promise.all(promises)
 			.then((result) => {
-				this.renderModal();
+				alert("Submission Successful");
 				this.props.history.push(`/open-bids`);
 			})
 			.catch((error) => {
 				console.log(error);
+				alert("Submission Error");
 			});
 	};
 
