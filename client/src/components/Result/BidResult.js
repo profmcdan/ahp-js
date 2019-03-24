@@ -27,6 +27,7 @@ class BidResult extends Component {
     criteria_fuzzy_table: null,
     criteria_cr: null,
     subcriteria_data: null,
+    alternative_data: null,
   };
   getBidDetails = () => {
     const { bid_id } = this.state;
@@ -76,6 +77,7 @@ class BidResult extends Component {
             criteria_fuzzy_table,
             criteria_cr,
             subcriteria_data,
+            alternative_data,
           } = res.data;
           await this.setState({
             bid_id,
@@ -92,6 +94,7 @@ class BidResult extends Component {
             criteria_fuzzy_table,
             criteria_cr,
             subcriteria_data,
+            alternative_data,
             loading: false,
           });
         })
@@ -118,7 +121,7 @@ class BidResult extends Component {
   render() {
     const {
       criteria_matrix,
-      bid_id,
+      alternative_data,
       sub_criteria_matrix,
       alternative_matrix,
       criteria_aggregate,
@@ -248,6 +251,29 @@ class BidResult extends Component {
                   Status: <span>{criteria_cr.status} </span>
                 </p>
               </div>
+            ) : null}
+          </div>
+          <div className="shift-one">
+            <Header>Final Alternative Global Weight</Header>
+            {alternative_data ? (
+              <Table>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Alternative Name</Table.HeaderCell>
+                    <Table.HeaderCell>Global Weight</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {alternative_data.alt_list.map((alt, index) => (
+                    <Table.Row key={index}>
+                      <Table.Cell>{alt.name}</Table.Cell>
+                      <Table.Cell>{alt.weight}</Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            ) : loading ? (
+              <div>Loading...</div>
             ) : null}
           </div>
         </div>

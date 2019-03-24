@@ -27,7 +27,7 @@ const getAlternativeMatrix = (
   //   const uniqueAlternative = toArray.filter(onlyUnique);
   //   const uniqueSubCriteria = subCriteriaArray.filter(onlyUnique);
 
-  console.log(uniqueAlternative);
+  // console.log(uniqueAlternative);
 
   let alternative_matrix = [];
 

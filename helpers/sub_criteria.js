@@ -1,5 +1,3 @@
-const getCriteriaFromBid = require("./bid_details");
-
 const getArrayFrom = arrayString => {
   const tempStr = arrayString.replace(/[\[\]']+/g, "");
   let numArray = tempStr.split(",").map(val => {

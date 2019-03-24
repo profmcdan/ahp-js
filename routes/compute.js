@@ -58,6 +58,14 @@ const getSubCriteriaIdFromBid = bid => {
   return subcrit_list;
 };
 
+const get_subcriteria_global_weights = subcriteria_data => {
+  const sb_gw = subcriteria_data.map(sb_data => {
+    return sb_data.sub_global_weight;
+  });
+  const result = [].concat.apply([], sb_gw);
+  return result;
+};
+
 // @desc GET Current User
 // api/auth/me
 // Private
@@ -131,7 +139,7 @@ router.get("/decision/:id", (req, res) => {
         alternative_matrix,
       );
       // console.log(ahpModel.evaluate_criteria());
-      //   const global_weights = ahpModel.get_global_weight();
+      // const global_weights = ahpModel.evaluate_alternative()
       const criteria_aggregate = await ahpModel.aggregate(criteria_matrix);
       const criteria_aggregate_sum = await ahpModel.vector_sum_aggregate(
         criteria_aggregate,
@@ -158,6 +166,13 @@ router.get("/decision/:id", (req, res) => {
 
       ahpModel.LOCAL_WEIGHT_CRITERIA = local_weight;
       const subcriteria_data = await ahpModel.get_global_weight2();
+      const sb_global_weights = get_subcriteria_global_weights(
+        subcriteria_data,
+      );
+      ahpModel.SUB_GLOBAL_WEIGHTs = sb_global_weights;
+      ahpModel.ALTERNATIVE_NAMES = alternative_list;
+
+      const alternative_data = await ahpModel.get_alternative_global_weights();
       // console.log(ahpModel.get_alternative_global_weights());
       // console.log(sub_criteria_matrix[0]);
       // console.log(alternative_matrix[0]);
@@ -176,6 +191,7 @@ router.get("/decision/:id", (req, res) => {
         criteria_fuzzy_table,
         criteria_cr,
         subcriteria_data,
+        alternative_data,
       });
     })
     .catch(error => {

@@ -24,6 +24,8 @@ class AHP {
     this.ALL_SUB_MATRIX = ALL_SUB_MATRIX;
     this.ALL_ALTERNATIVE_MATRIX = ALL_ALTERNATIVE_MATRIX;
     this.LOCAL_WEIGHT_CRITERIA = null;
+    this.SUB_GLOBAL_WEIGHTs = null;
+    this.ALTERNATIVE_NAMES = null;
   }
 
   get_size(A) {
@@ -203,7 +205,6 @@ class AHP {
   evaluate_subcriteria(criterialIndex) {
     const R = this.aggregate(this.SUBCRITERIA[criterialIndex]);
     // Vector Sum
-    console.log(R);
     const v_sum = this.vector_sum_aggregate(R);
     // Get Fuzzy Weight
     const W = this.find_fuzzy_weight(R, v_sum);
@@ -234,6 +235,40 @@ class AHP {
     };
   }
 
+  evaluate_subcriteria2(sb_matrix) {
+    const R = this.aggregate(sb_matrix);
+    // Vector Sum
+    console.log(R);
+    const v_sum = this.vector_sum_aggregate(R);
+    // Get Fuzzy Weight
+    const W = this.find_fuzzy_weight(R, v_sum);
+    // print(np.transpose(W))
+    // Defuziffy
+    const M = this.defuziffy(transpose(W));
+    // Normalize
+    const M_norm = this.normalize(M);
+    // Engenvector
+    const eigenvector = this.eigen(M_norm);
+    // console.log(eigenvector);
+    // Consistency Ratio
+    const consis_ratio = this.get_consistency_ratio(eigenvector);
+    // if (!this.LOCAL_WEIGHT_CRITERIA) {
+    //   this.LOCAL_WEIGHT_CRITERIA = this.evaluate_criteria().eigenvector;
+    // }
+
+    const local_weight = this.LOCAL_WEIGHT_CRITERIA;
+    // console.log(eigenvector);
+    // const sub_global_weight = eigenvector.map(eig => {
+    //   return local_weight[criterialIndex] * eig;
+    // });
+    return {
+      consis_ratio,
+      eigenvector,
+      sub_global_weight: null,
+      local_weight_criteria: local_weight[criterialIndex],
+    };
+  }
+
   evaluate_all_subcriteria() {
     const criteria_length = this.A.length;
     let data = [];
@@ -252,7 +287,7 @@ class AHP {
     const W = this.find_fuzzy_weight(R, v_sum);
     // print(np.transpose(W))
     // Defuziffy
-    const M = this.defuziffy(W);
+    const M = this.defuziffy(transpose(W));
     // Normalize
     const M_norm = this.normalize(M);
     // Engenvector
@@ -271,14 +306,10 @@ class AHP {
     for (let crt = 0; crt < numOfCriteria; crt++) {
       let sb_weights = [];
       let sb_local_weight = this.evaluate_subcriteria(crt);
-      if (sb_local_weight.consis_ratio.status == "Acceptable") {
-        let eigenvector = sb_local_weight.eigenvector;
-        eigenvector.map(eig => {
-          sb_weights.push(eig * criterial_weights[crt]);
-        });
-      } else {
-        return null;
-      }
+      let eigenvector = sb_local_weight.eigenvector;
+      eigenvector.map(eig => {
+        sb_weights.push(eig * criterial_weights[crt]);
+      });
 
       globalWeights.push(sb_weights);
     }
@@ -299,9 +330,6 @@ class AHP {
 
   get_alternative_global_weights() {
     let sb_weights = this.get_global_weight();
-    if (sb_weights === null) {
-      return null;
-    }
 
     // sb_weights = np.asarray(sb_weights)   # Convert to NDARRAy
     // sb_weights = np.ndarray.flatten(sb_weights)
@@ -314,34 +342,61 @@ class AHP {
     });
     sb_weights = sb_weights_final;
     // Loop tru each of the subCriteria for the local weights of the Alternative realtive to each.
-    let alternative_local_weights = [];
+
     // heck this
     // alternative_local_weights = [[] for i in range(0,
     //     len(self.evaluate_alternative(self.ALTERNATIVE[0])[1]))]
-    console.log(this.ALTERNATIVE.length);
-    this.ALTERNATIVE.forEach(function(alt_mat) {
-      alt_local_weights = this.evaluate_alternative(alt_mat);
-      alt_local_weights = alt_local_weights[1];
+    // console.log(this.ALTERNATIVE.length);
+    let alternatives = this.ALTERNATIVE;
+    // alternatives = transpose(alternatives);
+    let subCriteriaGlobalWeights = this.SUB_GLOBAL_WEIGHTs;
+    let numOfAlternative = alternatives[0].length;
+    let alternative_local_weights = [];
+
+    alternatives.forEach(alt_mat => {
+      let alt_local_weights = this.evaluate_alternative(alt_mat).eigenvector;
+
+      const temp = [];
       for (let i = 0; i < alt_local_weights.length; i++) {
-        alternative_local_weights[i].push(alt_local_weights);
+        const val = alt_local_weights[i];
+        temp.push(val);
       }
+      alternative_local_weights.push(temp);
     });
 
-    let alternative_global_weights = [];
-    let numOfAlternative = alt_local_weights.length; // Number of Contractors
-    alternative_local_weights = alternative_local_weights[0];
-    alternative_local_weights = np.transpose(alternative_local_weights);
-    for (let altIndex = 0; altIndex < numOfAlternative; altIndex++) {
-      let givenAltWeight = [];
-      let ref_weight = alternative_local_weights[altIndex];
-      for (let sbIndex = 0; sbIndex < sb_weights.length; sbIndex++) {
-        givenAltWeight.push(sb_weights[sbIndex] * ref_weight[sbIndex]);
+    // console.log(alternative_local_weights);
+    // Mutiplication
+    let local_weights = [...Array(numOfAlternative)].map(e => Array());
+    for (let index = 0; index < subCriteriaGlobalWeights.length; index++) {
+      let temp_weight = alternative_local_weights[index];
+      for (let j = 0; j < temp_weight.length; j++) {
+        const val = subCriteriaGlobalWeights[index] * temp_weight[j];
+        local_weights[j].push(val);
       }
-
-      alternative_global_weights.push(givenAltWeight);
     }
 
-    return alternative_global_weights;
+    // Sum the arrays
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+    const local_weight_sum = local_weights.map(lw => {
+      return lw.reduce(reducer);
+    });
+
+    // Build the Data for Table
+    const alternative_list = this.ALTERNATIVE_NAMES;
+    const alt_list = [];
+    for (let index = 0; index < alternative_list.length; index++) {
+      alt_list.push({
+        name: alternative_list[index],
+        weight: local_weight_sum[index],
+      });
+    }
+
+    return {
+      alt_global_weights: local_weight_sum,
+      local_weights,
+      sub_global_weight: subCriteriaGlobalWeights,
+      alt_list,
+    };
   }
 
   // TODO --  Fix this for a multi-dimensional array
