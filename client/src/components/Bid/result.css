@@ -1,5 +1,0 @@
-.main-container {
-  display: grid;
-  grid-template-rows: 1fr 3fr 20fr;
-  grid-row-gap: 50px;
-}

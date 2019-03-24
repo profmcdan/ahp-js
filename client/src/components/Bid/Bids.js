@@ -11,7 +11,7 @@ class Bids extends Component {
       bids: [],
       column: null,
       direction: null,
-      checked: false
+      checked: false,
     };
   }
   handleSort = clickedColumn => () => {
@@ -21,7 +21,7 @@ class Bids extends Component {
       this.setState({
         column: clickedColumn,
         bids: _.sortBy(bids, [clickedColumn]),
-        direction: "ascending"
+        direction: "ascending",
       });
 
       return;
@@ -29,7 +29,7 @@ class Bids extends Component {
 
     this.setState({
       bids: bids.reverse(),
-      direction: direction === "ascending" ? "descending" : "ascending"
+      direction: direction === "ascending" ? "descending" : "ascending",
     });
   };
   componentWillMount() {
@@ -71,7 +71,7 @@ class Bids extends Component {
         console.log(error);
       });
     const newBids = oldBids.map(h =>
-      h._id === id ? { ...h, activated: activatedState } : h
+      h._id === id ? { ...h, activated: activatedState } : h,
     );
     this.setState({ bids: newBids });
     console.log(this.state);
@@ -130,7 +130,7 @@ class Bids extends Component {
                   </Table.Cell>
                   <Table.Cell>
                     <Link
-                      to={"/bid/result/" + bid._id}
+                      to={"/bid/results/" + bid._id}
                       className="ui icon button"
                     >
                       <Icon name="registered" />
