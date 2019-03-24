@@ -14,9 +14,19 @@ class BidResult extends Component {
     id: null,
     decisions: null,
     user: null,
-    criteria_matrix: [],
-    sub_criteria_matrix: [],
-    alternative_matrix: [],
+    criteria_matrix: null,
+    sub_criteria_matrix: null,
+    alternative_matrix: null,
+    global_weights: null,
+    criteria_aggregate: null,
+    criteria_aggregate_sum: null,
+    criteria_fuzzy_weight: null,
+    criteria_relative_non_fuzzy_weight: null,
+    criteria_normalized: null,
+    local_weight: null,
+    criteria_fuzzy_table: null,
+    criteria_cr: null,
+    subcriteria_data: null,
   };
   getBidDetails = () => {
     const { bid_id } = this.state;
@@ -55,11 +65,31 @@ class BidResult extends Component {
             criteria_matrix,
             sub_criteria_matrix,
             alternative_matrix,
+            global_weights,
+            criteria_aggregate,
+            criteria_aggregate_sum,
+            criteria_fuzzy_weight,
+            criteria_relative_non_fuzzy_weight,
+            criteria_normalized,
+            local_weight,
+            criteria_fuzzy_table,
+            criteria_cr,
+            subcriteria_data,
           } = res.data;
           await this.setState({
             criteria_matrix,
             sub_criteria_matrix,
             alternative_matrix,
+            global_weights,
+            criteria_aggregate,
+            criteria_aggregate_sum,
+            criteria_fuzzy_weight,
+            criteria_relative_non_fuzzy_weight,
+            criteria_normalized,
+            local_weight,
+            criteria_fuzzy_table,
+            criteria_cr,
+            subcriteria_data,
             loading: false,
           });
         })
@@ -89,31 +119,135 @@ class BidResult extends Component {
       bid_id,
       sub_criteria_matrix,
       alternative_matrix,
+      criteria_aggregate,
+      criteria_fuzzy_weight,
+      criteria_fuzzy_table,
+      criteria_cr,
+      subcriteria_data,
       loading,
     } = this.state;
     return (
       <div className="main-container">
         <div>
-          <Header as="h1">Criteria Matrix</Header>
-          {criteria_matrix ? (
-            <Table compact selectable sortable celled definition striped>
-              <Table.Body>
-                {criteria_matrix.map((critCOl, cIndex) => (
-                  <Table.Row key={cIndex}>
-                    {critCOl.map((critRow, rIndex) => (
-                      <Table.Cell key={rIndex}>
-                        {this.formatData(critRow)}
-                      </Table.Cell>
-                    ))}
+          <div>
+            <Header as="h1">Criteria Matrix</Header>
+            {criteria_matrix ? (
+              <Table striped>
+                <Table.Body>
+                  {criteria_matrix.map((critCOl, cIndex) => (
+                    <Table.Row key={cIndex}>
+                      {critCOl.map((critRow, rIndex) => (
+                        <Table.Cell key={rIndex}>
+                          {this.formatData(critRow)}
+                        </Table.Cell>
+                      ))}
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            ) : loading ? (
+              <div>Loading...</div>
+            ) : (
+              <div>There is no response for this user</div>
+            )}
+          </div>
+          <div className="shift-one">
+            <Header as="h1">Criteria Matrix Aggregate</Header>
+            {criteria_aggregate ? (
+              <Table striped>
+                <Table.Body>
+                  {criteria_aggregate.map((critCOl, cIndex) => (
+                    <Table.Row key={cIndex}>
+                      {critCOl.map((critRow, rIndex) => (
+                        <Table.Cell key={rIndex}>{critRow}</Table.Cell>
+                      ))}
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            ) : loading ? (
+              <div>Loading...</div>
+            ) : (
+              <div>
+                Aggregate cannot be calculated because the criteria matrix does
+                not exist.
+              </div>
+            )}
+          </div>
+          <div className="shift-one">
+            <Header as="h1">Criteria Matrix Fuzzy Weight</Header>
+            {criteria_fuzzy_weight ? (
+              <Table striped>
+                <Table.Body>
+                  {criteria_fuzzy_weight.map((critCOl, cIndex) => (
+                    <Table.Row key={cIndex}>
+                      {critCOl.map((critRow, rIndex) => (
+                        <Table.Cell key={rIndex}>{critRow}</Table.Cell>
+                      ))}
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            ) : loading ? (
+              <div>Loading...</div>
+            ) : (
+              <div>
+                Aggregate cannot be calculated because the criteria matrix does
+                not exist.
+              </div>
+            )}
+          </div>
+          <div className="shift-one">
+            <Header as="h1">Criteria Local Weight Table</Header>
+            {criteria_fuzzy_table ? (
+              <Table striped>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Non-Fuzzy Weight</Table.HeaderCell>
+                    <Table.HeaderCell>Normalized Weight</Table.HeaderCell>
+                    <Table.HeaderCell>Local Weight</Table.HeaderCell>
                   </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          ) : loading ? (
-            <div>Loading...</div>
-          ) : (
-            <div>There is no response for this user</div>
-          )}
+                </Table.Header>
+                <Table.Body>
+                  {criteria_fuzzy_table.map((critCOl, cIndex) => (
+                    <Table.Row key={cIndex}>
+                      {critCOl.map((critRow, rIndex) => (
+                        <Table.Cell key={rIndex}>{critRow}</Table.Cell>
+                      ))}
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            ) : loading ? (
+              <div>Loading...</div>
+            ) : (
+              <div>
+                Aggregate cannot be calculated because the criteria matrix does
+                not exist.
+              </div>
+            )}
+          </div>
+          <div className="shift-one">
+            {criteria_cr ? (
+              <div>
+                <p>
+                  Lambda Max: <span>{criteria_cr.lamda_max} </span>
+                </p>
+                <p>
+                  Random Index: <span>{criteria_cr.RI}</span>
+                </p>
+                <p>
+                  Consistency Index: <span>{criteria_cr.CI} </span>
+                </p>
+                <p>
+                  Consistency Ratio <span>{criteria_cr.consistency_ratio}</span>
+                </p>
+                <p>
+                  Status: <span>{criteria_cr.status} </span>
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
         <div>
           <Header as="h1">SubCriteria Matrix</Header>
@@ -143,6 +277,39 @@ class BidResult extends Component {
           ) : (
             <div>There is no response for this user</div>
           )}
+        </div>
+        <div>
+          <Header as="h2">SubCriteria Weight Table</Header>
+          {subcriteria_data ? (
+            <Table striped>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Criteria Local Weight</Table.HeaderCell>
+                  <Table.HeaderCell>Sub-Criteria Local Weight</Table.HeaderCell>
+                  <Table.HeaderCell>
+                    Sub-Criteria Global Weight
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {subcriteria_data.map((sub_data, index) => (
+                  <Table.Row key={index}>
+                    <Table.Cell>{sub_data.local_weight_criteria}</Table.Cell>
+                    <Table.Cell>
+                      {sub_data.eigenvector.map(sbl => (
+                        <div>{sbl}</div>
+                      ))}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {sub_data.sub_global_weight.map(sgl => (
+                        <div>{sgl}</div>
+                      ))}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          ) : null}
         </div>
         <div>
           <Header as="h1">Alternatives Matrix</Header>
