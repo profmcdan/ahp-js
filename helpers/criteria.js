@@ -50,8 +50,10 @@ getSubCriteriaList = criteriaList => {
 const getCriteriaMatrix = bid_response => {
   const criteria = bid_response.response.criteria;
   const toArray = [];
+  const crit_ids = [];
   criteria.map(crt => {
     toArray.push(crt.to);
+    crit_ids.push(crt._id);
   });
 
   // Get all Unique criteria list
@@ -59,7 +61,8 @@ const getCriteriaMatrix = bid_response => {
     return self.indexOf(value) === index;
   };
   const uniqueCriteria = toArray.filter(onlyUnique);
-  // console.log(uniqueCriteria);
+  const uniqueCriteriaId = crit_ids.filter(onlyUnique);
+  // console.log(uniqueCriteriaId);
 
   criteria_matrix = [];
   uniqueCriteria.map(rowCrit => {

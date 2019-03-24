@@ -62,6 +62,7 @@ class BidResult extends Component {
 
         .then(async res => {
           const {
+            bid_id,
             criteria_matrix,
             sub_criteria_matrix,
             alternative_matrix,
@@ -77,6 +78,7 @@ class BidResult extends Component {
             subcriteria_data,
           } = res.data;
           await this.setState({
+            bid_id,
             criteria_matrix,
             sub_criteria_matrix,
             alternative_matrix,

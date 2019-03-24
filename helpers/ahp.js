@@ -190,7 +190,7 @@ class AHP {
     // Get Fuzzy Weight
     const W = this.find_fuzzy_weight(R, v_sum);
     //  Defuziffy
-    const M = this.defuziffy(W);
+    const M = this.defuziffy(transpose(W));
     // Normalize
     const M_norm = this.normalize(M);
     // Engenvector
