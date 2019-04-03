@@ -357,6 +357,7 @@ class BidResult extends Component {
                 <Table.Row>
                   <Table.HeaderCell>SubCriteria Global Weight</Table.HeaderCell>
                   <Table.HeaderCell>Alternative Local Weight</Table.HeaderCell>
+                  <Table.HeaderCell>Alternative Global Weight</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
@@ -367,6 +368,13 @@ class BidResult extends Component {
                       {alternative_data.alt_local_weights[index].map(
                         (sbl, i) => (
                           <div key={i}>{sbl}</div>
+                        ),
+                      )}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {alternative_data.alt_local_weights[index].map(
+                        (sbl, i) => (
+                          <div key={i}>{sbl * sub_data}</div>
                         ),
                       )}
                     </Table.Cell>
@@ -384,7 +392,9 @@ class BidResult extends Component {
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>Alternative Name</Table.HeaderCell>
-                  <Table.HeaderCell>Global Weight</Table.HeaderCell>
+                  <Table.HeaderCell>
+                    Final Alternative Global Weight
+                  </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
