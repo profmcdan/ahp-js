@@ -392,6 +392,7 @@ class AHP {
     }
 
     return {
+      alt_local_weights: alternative_local_weights,
       alt_global_weights: local_weight_sum,
       local_weights,
       sub_global_weight: subCriteriaGlobalWeights,

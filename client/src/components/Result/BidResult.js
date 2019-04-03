@@ -131,6 +131,7 @@ class BidResult extends Component {
       subcriteria_data,
       loading,
     } = this.state;
+
     return (
       <div className="main-container">
         <div>
@@ -253,29 +254,6 @@ class BidResult extends Component {
               </div>
             ) : null}
           </div>
-          <div className="shift-one">
-            <Header>Final Alternative Global Weight</Header>
-            {alternative_data ? (
-              <Table>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell>Alternative Name</Table.HeaderCell>
-                    <Table.HeaderCell>Global Weight</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {alternative_data.alt_list.map((alt, index) => (
-                    <Table.Row key={index}>
-                      <Table.Cell>{alt.name}</Table.Cell>
-                      <Table.Cell>{alt.weight}</Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            ) : loading ? (
-              <div>Loading...</div>
-            ) : null}
-          </div>
         </div>
         <div>
           <Header as="h1">SubCriteria Matrix</Header>
@@ -369,6 +347,58 @@ class BidResult extends Component {
           ) : (
             <div>There is no response for this user</div>
           )}
+        </div>
+
+        <div>
+          <Header as="h2">Alternative Local Weight Table</Header>
+          {alternative_data ? (
+            <Table striped>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>SubCriteria Global Weight</Table.HeaderCell>
+                  <Table.HeaderCell>Alternative Local Weight</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {alternative_data.sub_global_weight.map((sub_data, index) => (
+                  <Table.Row key={index}>
+                    <Table.Cell>{sub_data}</Table.Cell>
+                    <Table.Cell>
+                      {alternative_data.alt_local_weights[index].map(
+                        (sbl, i) => (
+                          <div key={i}>{sbl}</div>
+                        ),
+                      )}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          ) : null}
+        </div>
+
+        <div className="shift-one">
+          <Header>Final Alternative Global Weight</Header>
+          {alternative_data ? (
+            <Table>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Alternative Name</Table.HeaderCell>
+                  <Table.HeaderCell>Global Weight</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {alternative_data.alt_list.map((alt, index) => (
+                  <Table.Row key={index}>
+                    <Table.Cell>{alt.name}</Table.Cell>
+                    <Table.Cell>{alt.weight}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          ) : loading ? (
+            <div>Loading...</div>
+          ) : null}
         </div>
       </div>
     );
