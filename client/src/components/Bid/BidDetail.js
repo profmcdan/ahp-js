@@ -3,6 +3,8 @@ import { Header, Button, Form, Icon, Card } from "semantic-ui-react";
 import axios from "axios";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { render } from "react-dom";
+import Modal from "react-responsive-modal";
 
 class BidDetail extends Component {
   constructor(props) {
@@ -14,8 +16,18 @@ class BidDetail extends Component {
       contractors: [],
       edit_price: false,
       price: "",
+      open: false,
     };
   }
+
+  onOpenModal = id => {
+    this.setState({ open: true, alt_id: id });
+  };
+
+  onCloseModal = () => {
+    this.setState({ open: false });
+  };
+
   getBidDetails = () => {
     const { bid_id } = this.state;
     axios
@@ -179,14 +191,7 @@ class BidDetail extends Component {
   };
 
   render() {
-    const {
-      bid,
-      bid_id,
-      criteria,
-      contractors,
-      edit_price,
-      price,
-    } = this.state;
+    const { bid, bid_id, criteria, contractors, open, price } = this.state;
     // const { criteria, contractors } = bid;
     console.log(contractors);
     console.log(bid);
@@ -269,7 +274,7 @@ class BidDetail extends Component {
                     <Card.Meta>
                       <button
                         className="ui grey icon button"
-                        onClick={() => this.editPrice(crt._id)}
+                        onClick={() => this.onOpenModal(crt._id)}
                         data-tooltip="Edit Alternative Price"
                       >
                         <Icon name="edit" size="large" /> Edit Price
@@ -294,6 +299,30 @@ class BidDetail extends Component {
             </a>
           </div>
         </div>
+        <Modal open={open} onClose={this.onCloseModal} center>
+          <h2>Simple centered modal</h2>
+          <Form
+            onSubmit={() => {
+              this.submitPrice(this.state.alt_id, price);
+              this.getBidDetails();
+              this.onCloseModal();
+            }}
+          >
+            <Form.Field>
+              <input
+                label="Bid Price"
+                placeholder="Enter Price"
+                type="text"
+                name="price"
+                value={price}
+                onChange={this.handleChange}
+              />
+            </Form.Field>
+            <button type="submit" className="ui green button">
+              Update
+            </button>
+          </Form>
+        </Modal>
       </div>
     );
   }
