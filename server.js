@@ -26,13 +26,13 @@ const decisionRoute = require("./routes/decision");
 const computeRoute = require("./routes/compute");
 
 mongoose
-	.connect(config.DB, { useNewUrlParser: true })
-	.then(() => {
-		console.log("Database Connected");
-	})
-	.catch((err) => {
-		console.log("Cannot connect to the database: " + err);
-	});
+  .connect(config.DB, { useNewUrlParser: true })
+  .then(() => {
+    console.log("Database Connected");
+  })
+  .catch(err => {
+    console.log("Cannot connect to the database: " + err);
+  });
 
 // Passport Middleware
 app.use(passport.initialize());
@@ -44,7 +44,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-	res.send("Hello");
+  res.send("Hello");
 });
 
 app.use("/api/auth", usersRoute);
@@ -54,11 +54,11 @@ app.use("/api/decision", decisionRoute);
 app.use("/api/compute", computeRoute);
 
 app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+  res.sendFile(path.join(__dirname, "client", "public", "index.html"));
 });
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-	console.log(`Server is running on PORT ${PORT}`);
+  console.log(`Server is running on PORT ${PORT}`);
 });
