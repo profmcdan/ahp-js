@@ -90,6 +90,7 @@ class BidDetail extends Component {
             <Form
               onSubmit={() => {
                 this.submitPrice(id, price);
+                this.getBidDetails();
                 onClose();
               }}
             >
