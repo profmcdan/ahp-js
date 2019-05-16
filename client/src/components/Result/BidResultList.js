@@ -16,7 +16,7 @@ export default class BidResultList extends Component {
     decisions: null,
     column: null,
     direction: null,
-    checked: false,
+    checked: false
   };
   handleSort = clickedColumn => () => {
     const { column, bids, direction } = this.state;
@@ -25,7 +25,7 @@ export default class BidResultList extends Component {
       this.setState({
         column: clickedColumn,
         bids: _.sortBy(bids, [clickedColumn]),
-        direction: "ascending",
+        direction: "ascending"
       });
 
       return;
@@ -33,7 +33,7 @@ export default class BidResultList extends Component {
 
     this.setState({
       bids: bids.reverse(),
-      direction: direction === "ascending" ? "descending" : "ascending",
+      direction: direction === "ascending" ? "descending" : "ascending"
     });
   };
 
@@ -44,7 +44,7 @@ export default class BidResultList extends Component {
       .then(async res => {
         const { bid } = res.data;
         await this.setState({
-          bid,
+          bid
         });
         return null;
       })
@@ -72,7 +72,7 @@ export default class BidResultList extends Component {
       const decoded = jwt_decode(token);
       await this.setState({
         user: decoded,
-        bid_id: this.props.match.params.id,
+        bid_id: this.props.match.params.id
       });
       console.log(decoded);
       await this.getBidDetails();
@@ -83,12 +83,16 @@ export default class BidResultList extends Component {
         .then(async res => {
           const { decisions } = res.data;
           await this.setState({
-            decisions,
+            decisions
           });
         })
         .catch(error => {
           console.log(error);
         });
+    } else {
+      this.setState({
+        errorMessage: "You must be logged in to view this page"
+      });
     }
   }
 

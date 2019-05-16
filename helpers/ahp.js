@@ -4,7 +4,7 @@ let RI_TABLE = [0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49]; // Look-up
 function transpose(matrix) {
   return matrix.reduce(
     (prev, next) => next.map((item, i) => (prev[i] || []).concat(next[i])),
-    [],
+    []
   );
 }
 
@@ -15,7 +15,7 @@ class AHP {
     ALTERNATIVE,
     ALL_CRITERIA_MATRIX,
     ALL_SUB_MATRIX,
-    ALL_ALTERNATIVE_MATRIX,
+    ALL_ALTERNATIVE_MATRIX
   ) {
     this.A = CRITERIA;
     this.SUBCRITERIA = SUBCRITERIA;
@@ -51,7 +51,7 @@ class AHP {
       let r = [
         Math.pow(r1, 1 / Ar.length),
         Math.pow(r2, 1 / Ar.length),
-        Math.pow(r3, 1 / Ar.length),
+        Math.pow(r3, 1 / Ar.length)
       ];
       ri.push(r);
     });
@@ -152,7 +152,7 @@ class AHP {
     }, 0);
     const sum_eigenvector = eigenvector.reduce(function(
       accumulator,
-      currentValue,
+      currentValue
     ) {
       return accumulator + currentValue;
     },
@@ -179,7 +179,7 @@ class AHP {
       status,
       lamda_max,
       CI,
-      RI,
+      RI
     };
     return data;
   }
@@ -231,7 +231,7 @@ class AHP {
       consis_ratio,
       eigenvector,
       sub_global_weight,
-      local_weight_criteria: local_weight[criterialIndex],
+      local_weight_criteria: local_weight[criterialIndex]
     };
   }
 
@@ -265,7 +265,7 @@ class AHP {
       consis_ratio,
       eigenvector,
       sub_global_weight: null,
-      local_weight_criteria: local_weight[criterialIndex],
+      local_weight_criteria: local_weight[criterialIndex]
     };
   }
 
@@ -387,7 +387,7 @@ class AHP {
     for (let index = 0; index < alternative_list.length; index++) {
       alt_list.push({
         name: alternative_list[index],
-        weight: local_weight_sum[index],
+        weight: local_weight_sum[index]
       });
     }
 
@@ -396,7 +396,7 @@ class AHP {
       alt_global_weights: local_weight_sum,
       local_weights,
       sub_global_weight: subCriteriaGlobalWeights,
-      alt_list,
+      alt_list
     };
   }
 
@@ -411,7 +411,7 @@ class AHP {
       const weights = get_global_weight(
         this.ALL_CRITERIA_MATRIX[i],
         this.ALL_SUB_MATRIX[i],
-        this.ALL_ALTERNATIVE_MATRIX[i],
+        this.ALL_ALTERNATIVE_MATRIX[i]
       );
       global_weights.push(weights);
     }
@@ -426,7 +426,7 @@ class AHP {
       numOfDecisionMakers,
       this.ALL_CRITERIA_MATRIX,
       this.ALL_SUB_MATRIX,
-      this.ALL_ALTERNATIVE_MATRIX,
+      this.ALL_ALTERNATIVE_MATRIX
     );
     let priority_weight = [];
     alternative_global_weights.forEach(function(each_weight) {
@@ -444,7 +444,7 @@ class AHP {
       numOfDecisionMakers,
       this.ALL_CRITERIA_MATRIX,
       this.ALL_SUB_MATRIX,
-      this.ALL_ALTERNATIVE_MATRIX,
+      this.ALL_ALTERNATIVE_MATRIX
     );
     return priority_weights.slice(0, threshold);
   }
@@ -456,7 +456,7 @@ class AHP {
       this.ALL_CRITERIA_MATRIX,
       this.ALL_SUB_MATRIX,
       this.ALL_ALTERNATIVE_MATRIX,
-      threshold,
+      threshold
     );
     let selected_index = [];
     let selected_price = [];
@@ -465,7 +465,7 @@ class AHP {
       selected_price.push(estimated_price - bid_price[sel[1]]);
     });
     let selection = Math.min(selected_price);
-    let selected_index = selected_price.indexOf(Math.max(...selected_price));
+    let selectedIndex = selected_price.indexOf(Math.max(...selected_price));
     return selectedIndex;
   }
 
@@ -474,7 +474,7 @@ class AHP {
     const selected_contractor = this.get_final_alternative(
       bid_price,
       estimated_price,
-      threshold,
+      threshold
     );
     selected_contractor = contractors[selected_contractor];
     return selected_contractor;

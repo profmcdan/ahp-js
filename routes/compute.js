@@ -17,7 +17,7 @@ const AHP = require("../helpers/ahp");
 function transpose(matrix) {
   return matrix.reduce(
     (prev, next) => next.map((item, i) => (prev[i] || []).concat(next[i])),
-    [],
+    []
   );
 }
 
@@ -74,7 +74,7 @@ router.get("/decision/:bid_id/user/:user_id", (req, res) => {
 
   Decision.findOne({
     maker: user_id,
-    bid: bid_id,
+    bid: bid_id
   })
     .then(decision => {
       if (!decision) {
@@ -87,7 +87,7 @@ router.get("/decision/:bid_id/user/:user_id", (req, res) => {
       const ahpModel = new AHP(
         criteria_matrix,
         sub_criteria_matrix,
-        alternative_matrix,
+        alternative_matrix
       );
       // console.log(ahpModel.evaluate_criteria());
       console.log(ahpModel.get_global_weight());
@@ -97,12 +97,54 @@ router.get("/decision/:bid_id/user/:user_id", (req, res) => {
       return res.json({
         criteria_matrix,
         sub_criteria_matrix,
-        alternative_matrix,
+        alternative_matrix
       });
     })
     .catch(error => {
       console.log(error);
       return res.json({ error: error, statusCode: 500 });
+    });
+});
+
+router.get("/decision/:id/criteria-cr", (req, res) => {
+  const { id } = req.params;
+
+  Decision.findById(id)
+    .then(async decision => {
+      if (!decision) {
+        return res.json({ error: "Response not found", statusCode: 404 });
+      }
+      const bid = await Bid.findById(decision.bid);
+      const criteria_list = await getCriteriaFromBid(bid);
+      const criteria_matrix = await getCriteriaMatrix(decision);
+
+      const ahpModel = new AHP(criteria_matrix, [], []);
+      const criteria_aggregate = await ahpModel.aggregate(criteria_matrix);
+      const criteria_aggregate_sum = await ahpModel.vector_sum_aggregate(
+        criteria_aggregate
+      );
+      const criteria_fuzzy_weight = await ahpModel.find_fuzzy_weight(
+        criteria_aggregate,
+        criteria_aggregate_sum
+      );
+      const criteria_relative_non_fuzzy_weight = await ahpModel.defuziffy(
+        transpose(criteria_fuzzy_weight)
+      );
+      const criteria_normalized = await ahpModel.normalize(
+        criteria_relative_non_fuzzy_weight
+      );
+      const local_weight = await ahpModel.eigen(criteria_normalized);
+
+      const criteria_cr = await ahpModel.get_consistency_ratio(local_weight);
+
+      return res.json({
+        criteria_cr,
+        bid,
+        decision
+      });
+    })
+    .catch(error => {
+      return res.json({ errorMessage: "An error occurred", error });
     });
 });
 
@@ -125,41 +167,41 @@ router.get("/decision/:id", (req, res) => {
       const sub_criteria_matrix = await getSubCriteriaMatrix(
         decision,
         criteria_list,
-        subcriteria_list,
+        subcriteria_list
       );
       const alternative_matrix = await getAlternativeMatrix(
         decision,
         subcriteria_list_id,
-        alternative_list,
+        alternative_list
       );
       // console.log(criteria_matrix);
       const ahpModel = new AHP(
         criteria_matrix,
         sub_criteria_matrix,
-        alternative_matrix,
+        alternative_matrix
       );
       // console.log(ahpModel.evaluate_criteria());
       // const global_weights = ahpModel.evaluate_alternative()
       const criteria_aggregate = await ahpModel.aggregate(criteria_matrix);
       const criteria_aggregate_sum = await ahpModel.vector_sum_aggregate(
-        criteria_aggregate,
+        criteria_aggregate
       );
       const criteria_fuzzy_weight = await ahpModel.find_fuzzy_weight(
         criteria_aggregate,
-        criteria_aggregate_sum,
+        criteria_aggregate_sum
       );
       const criteria_relative_non_fuzzy_weight = await ahpModel.defuziffy(
-        transpose(criteria_fuzzy_weight),
+        transpose(criteria_fuzzy_weight)
       );
       const criteria_normalized = await ahpModel.normalize(
-        criteria_relative_non_fuzzy_weight,
+        criteria_relative_non_fuzzy_weight
       );
       const local_weight = await ahpModel.eigen(criteria_normalized);
 
       const criteria_fuzzy_table = transpose([
         criteria_relative_non_fuzzy_weight,
         criteria_normalized,
-        local_weight,
+        local_weight
       ]);
       //   console.log(local_weight);
       const criteria_cr = await ahpModel.get_consistency_ratio(local_weight);
@@ -167,7 +209,7 @@ router.get("/decision/:id", (req, res) => {
       ahpModel.LOCAL_WEIGHT_CRITERIA = local_weight;
       const subcriteria_data = await ahpModel.get_global_weight2();
       const sb_global_weights = get_subcriteria_global_weights(
-        subcriteria_data,
+        subcriteria_data
       );
       ahpModel.SUB_GLOBAL_WEIGHTs = sb_global_weights;
       ahpModel.ALTERNATIVE_NAMES = alternative_list;
@@ -191,7 +233,7 @@ router.get("/decision/:id", (req, res) => {
         criteria_fuzzy_table,
         criteria_cr,
         subcriteria_data,
-        alternative_data,
+        alternative_data
       });
     })
     .catch(error => {
