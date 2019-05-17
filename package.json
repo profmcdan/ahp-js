@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "now-build": "cd client && react-scripts build",
+    "now-build": "cd client && npm install --only=dev && npm install && npm run build",
     "client-install": "npm install --prefix client",
     "start": "node server.js",
     "server": "nodemon server.js",
