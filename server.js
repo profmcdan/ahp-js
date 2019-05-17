@@ -43,9 +43,9 @@ require("./passport")(passport);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello");
+// });
 
 app.use("/api/auth", usersRoute);
 app.use("/api/bid", bidsRoute);
@@ -53,6 +53,7 @@ app.use("/api/alternative", contractorRoute);
 app.use("/api/decision", decisionRoute);
 app.use("/api/compute", computeRoute);
 
+app.use("/", express.static(path.join(__dirname, "client", "build")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "public", "index.html"));
 });
