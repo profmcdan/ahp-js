@@ -36,19 +36,5 @@
   },
   "devDependencies": {
     "concurrently": "^4.1.0"
-  },
-  "engines": {
-    "node": "10.15.3"
-  },
-  "now": {
-    "engines": {
-      "node": "10.15.3"
-    }
-  },
-  "builds": [
-    {
-      "src": "*.js",
-      "use": "@now/node"
-    }
-  ]
+  }
 }
