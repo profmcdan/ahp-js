@@ -5,10 +5,10 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { config } from "../../config";
+import "./result.css";
 const apiUrl = config.apiUrl;
 
 // import { Fraction } from "fractional";
-import "./result.css";
 
 class BidResult extends Component {
   state = {
