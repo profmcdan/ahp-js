@@ -1,0 +1,10 @@
+{
+  "name": "ahp-js",
+  "version": 2,
+  "public": true,
+  "builds": [
+    { "src": "./client/build/*.js", "use": "@now/node" },
+    { "src": "./client/build/*.html", "use": "@now/static" },
+    { "src": "./client/build/*.css", "use": "@now/static" }
+  ]
+}
