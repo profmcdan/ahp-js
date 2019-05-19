@@ -4,6 +4,9 @@ import { Header, Button, Checkbox, Icon, Table } from "semantic-ui-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import { config } from "../../config";
+const apiUrl = config.apiUrl;
+
 // import { Fraction } from "fractional";
 import "./result.css";
 
@@ -27,16 +30,16 @@ class BidResult extends Component {
     criteria_fuzzy_table: null,
     criteria_cr: null,
     subcriteria_data: null,
-    alternative_data: null,
+    alternative_data: null
   };
   getBidDetails = () => {
     const { bid_id } = this.state;
     axios
-      .get(`/api/decision/${bid_id}`)
+      .get(`${apiUrl}/api/decision/${bid_id}`)
       .then(async res => {
         const { decisions } = res.data;
         await this.setState({
-          decisions,
+          decisions
         });
         return null;
       })
@@ -52,14 +55,14 @@ class BidResult extends Component {
       const decoded = jwt_decode(token);
       await this.setState({
         user: decoded,
-        id: this.props.match.params.id,
+        id: this.props.match.params.id
       });
       console.log(decoded);
       await this.getBidDetails();
       const { id } = this.state;
       // .get(`/api/compute/decision/${bid_id}/user/${user.id}`)
       axios
-        .get(`/api/compute/decision/${id}`)
+        .get(`${apiUrl}/api/compute/decision/${id}`)
 
         .then(async res => {
           const {
@@ -77,7 +80,7 @@ class BidResult extends Component {
             criteria_fuzzy_table,
             criteria_cr,
             subcriteria_data,
-            alternative_data,
+            alternative_data
           } = res.data;
           await this.setState({
             bid_id,
@@ -95,7 +98,7 @@ class BidResult extends Component {
             criteria_cr,
             subcriteria_data,
             alternative_data,
-            loading: false,
+            loading: false
           });
         })
         .catch(error => {
@@ -129,7 +132,7 @@ class BidResult extends Component {
       criteria_fuzzy_table,
       criteria_cr,
       subcriteria_data,
-      loading,
+      loading
     } = this.state;
 
     return (
@@ -368,14 +371,14 @@ class BidResult extends Component {
                       {alternative_data.alt_local_weights[index].map(
                         (sbl, i) => (
                           <div key={i}>{sbl}</div>
-                        ),
+                        )
                       )}
                     </Table.Cell>
                     <Table.Cell>
                       {alternative_data.alt_local_weights[index].map(
                         (sbl, i) => (
                           <div key={i}>{sbl * sub_data}</div>
-                        ),
+                        )
                       )}
                     </Table.Cell>
                   </Table.Row>

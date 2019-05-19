@@ -4,6 +4,9 @@ import { Header, Button, Checkbox, Icon, Table } from "semantic-ui-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import { config } from "../../config";
+const apiUrl = config.apiUrl;
+
 // import { Fraction } from "fractional";
 import "./result.css";
 
@@ -40,7 +43,7 @@ export default class BidResultList extends Component {
   getBidDetails = () => {
     const { bid_id } = this.state;
     axios
-      .get(`/api/bid/${bid_id}`)
+      .get(`${apiUrl}/api/bid/${bid_id}`)
       .then(async res => {
         const { bid } = res.data;
         await this.setState({
@@ -56,7 +59,7 @@ export default class BidResultList extends Component {
 
   getUsers = () => {
     axios
-      .get("/api/auth/users")
+      .get(`${apiUrl}/api/auth/users`)
       .then(async res => {
         const { users } = res.data;
         await this.setState({ users });
@@ -79,7 +82,7 @@ export default class BidResultList extends Component {
       await this.getUsers();
       const { bid_id } = this.state;
       axios
-        .get(`/api/decision/${bid_id}`)
+        .get(`${apiUrl}/api/decision/${bid_id}`)
         .then(async res => {
           const { decisions } = res.data;
           await this.setState({

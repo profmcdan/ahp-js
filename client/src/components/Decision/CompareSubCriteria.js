@@ -4,6 +4,8 @@ import CompareInput from "./CompareInput";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Compare from "./Compare";
+import { config } from "../../config";
+const apiUrl = config.apiUrl;
 
 class CompareSubCriteria extends Component {
   constructor(props) {
@@ -16,7 +18,7 @@ class CompareSubCriteria extends Component {
       description: "",
       criteria: "",
       subcriteria: [],
-      scores: [],
+      scores: []
     };
   }
 
@@ -24,7 +26,7 @@ class CompareSubCriteria extends Component {
     const { bid_id, criteria_id } = this.state;
     console.log(bid_id);
     axios
-      .get(`/api/bid/${bid_id}`) // {TODO} : Confirm this endpoint
+      .get(`${apiUrl}/api/bid/${bid_id}`) // {TODO} : Confirm this endpoint
       .then(response => {
         console.log(response);
         const bid = response.data.bid;
@@ -33,7 +35,7 @@ class CompareSubCriteria extends Component {
         console.log(subcriteria);
         this.setState({
           bid: bid,
-          subcriteria,
+          subcriteria
         });
         console.log(this.state);
       })
@@ -44,7 +46,7 @@ class CompareSubCriteria extends Component {
 
   cleanData = (allScores, newScore) => {
     const index = allScores.findIndex(
-      score => score.to === newScore.to && score.from === newScore.from,
+      score => score.to === newScore.to && score.from === newScore.from
     );
     if (index < 0) {
       allScores.push(newScore);
@@ -87,7 +89,7 @@ class CompareSubCriteria extends Component {
             console.log(resp);
             if (resp.errors) {
               alert(
-                "There is no response for this bid from you yet, create one now",
+                "There is no response for this bid from you yet, create one now"
               );
               this.props.history.push("/open-bids");
             } else {
@@ -108,18 +110,18 @@ class CompareSubCriteria extends Component {
     this.setState(
       {
         bid_id: this.props.match.params.bid_id,
-        criteria_id: this.props.match.params.criteria_id,
+        criteria_id: this.props.match.params.criteria_id
       },
       () => {
         this.getBidDetails();
-      },
+      }
     );
   }
 
   handleSubmit = e => {
     e.preventDefault();
     const { scores, decision_id, criteria_id } = this.state;
-    const endPoint = `/api/decision/add/${decision_id}/sub-criteria`;
+    const endPoint = `${apiUrl}/api/decision/add/${decision_id}/sub-criteria`;
     const jsonScores = JSON.stringify(scores);
 
     // const formData = new FormData();

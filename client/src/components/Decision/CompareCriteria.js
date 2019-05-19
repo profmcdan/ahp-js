@@ -4,8 +4,9 @@ import CompareInput from "./CompareInput";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Compare from "./Compare";
+import { config } from "../../config";
+const apiUrl = config.apiUrl;
 
-const mainUrl = "http://127.0.0.1:5000";
 class CompareCriteria extends Component {
   constructor(props) {
     super();
@@ -28,7 +29,7 @@ class CompareCriteria extends Component {
 
   getBidDetails = () => {
     const { bid_id } = this.state;
-    const endPoint = `/api/bid/${bid_id}`;
+    const endPoint = `${apiUrl}/api/bid/${bid_id}`;
     axios
       .get(endPoint)
       .then(response => {
@@ -86,7 +87,7 @@ class CompareCriteria extends Component {
         if (this.state.user) {
           // check if this user has a response for the bid already;
           const { bid_id, user } = this.state;
-          const endPoint = `/api/decision/${bid_id}/${user.id}`;
+          const endPoint = `${apiUrl}/api/decision/${bid_id}/${user.id}`;
           axios.get(endPoint).then(response => {
             const resp = response.data;
             if (resp.errors) {
@@ -115,7 +116,7 @@ class CompareCriteria extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const { scores, decision_id } = this.state;
-    const endPoint = `/api/decision/add/${decision_id}/criteria`;
+    const endPoint = `${apiUrl}/api/decision/add/${decision_id}/criteria`;
 
     const promises = scores.map(async score => {
       const formData = new FormData();
@@ -140,7 +141,7 @@ class CompareCriteria extends Component {
       .then(result => {
         console.log(result);
         axios
-          .get(`/api/compute/decision/${decision_id}/criteria-cr`)
+          .get(`${apiUrl}/api/compute/decision/${decision_id}/criteria-cr`)
           .then(resp => {
             const { criteria_cr } = resp.data;
             if (criteria_cr.status !== "Acceptable") {
