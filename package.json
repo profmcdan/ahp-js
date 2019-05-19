@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "engines": {
-    "node": "12.1.0"
-  },
   "scripts": {
     "client-install": "npm install --prefix client",
     "start": "node server.js",
