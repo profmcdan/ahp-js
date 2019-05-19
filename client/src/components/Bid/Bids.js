@@ -3,6 +3,8 @@ import _ from "lodash";
 import { Header, Button, Checkbox, Icon, Table } from "semantic-ui-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { config } from "../../config";
+const apiUrl = config.apiUrl;
 
 class Bids extends Component {
   constructor(props) {
@@ -11,7 +13,7 @@ class Bids extends Component {
       bids: [],
       column: null,
       direction: null,
-      checked: false,
+      checked: false
     };
   }
   handleSort = clickedColumn => () => {
@@ -21,7 +23,7 @@ class Bids extends Component {
       this.setState({
         column: clickedColumn,
         bids: _.sortBy(bids, [clickedColumn]),
-        direction: "ascending",
+        direction: "ascending"
       });
 
       return;
@@ -29,12 +31,12 @@ class Bids extends Component {
 
     this.setState({
       bids: bids.reverse(),
-      direction: direction === "ascending" ? "descending" : "ascending",
+      direction: direction === "ascending" ? "descending" : "ascending"
     });
   };
   componentWillMount() {
     axios
-      .get("/api/bid")
+      .get(`${apiUrl}/api/bid`)
       .then(bids => {
         console.log(bids.data);
         this.setState({ bids: bids.data });
@@ -45,7 +47,7 @@ class Bids extends Component {
   }
 
   closeOrOpenBid = id => {
-    let endpointUrl = `/api/bid/${id}/activate`;
+    let endpointUrl = `${apiUrl}/api/bid/${id}/activate`;
     const oldBids = this.state.bids;
     const bid_to_change = oldBids.find(bid => bid._id === id);
     let activatedState;
@@ -71,7 +73,7 @@ class Bids extends Component {
         console.log(error);
       });
     const newBids = oldBids.map(h =>
-      h._id === id ? { ...h, activated: activatedState } : h,
+      h._id === id ? { ...h, activated: activatedState } : h
     );
     this.setState({ bids: newBids });
     console.log(this.state);

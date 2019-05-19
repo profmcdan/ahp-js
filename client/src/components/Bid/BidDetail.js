@@ -5,6 +5,8 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { render } from "react-dom";
 import Modal from "react-responsive-modal";
+import { config } from "../../config";
+const apiUrl = config.apiUrl;
 
 class BidDetail extends Component {
   constructor(props) {
@@ -16,7 +18,7 @@ class BidDetail extends Component {
       contractors: [],
       edit_price: false,
       price: "",
-      open: false,
+      open: false
     };
   }
 
@@ -31,13 +33,13 @@ class BidDetail extends Component {
   getBidDetails = () => {
     const { bid_id } = this.state;
     axios
-      .get(`/api/bid/${bid_id}`)
+      .get(`${apiUrl}/api/bid/${bid_id}`)
       .then(bid => {
         const returned_bid = bid.data.bid;
         this.setState({
           bid: returned_bid,
           criteria: returned_bid.criteria,
-          contractors: returned_bid.contractors,
+          contractors: returned_bid.contractors
         });
       })
       .catch(error => {
@@ -64,7 +66,7 @@ class BidDetail extends Component {
           label: "Yes",
           onClick: () => {
             axios
-              .delete(`/api/bid/${bid_id}/criteria/${id}`)
+              .delete(`${apiUrl}/api/bid/${bid_id}/criteria/${id}`)
               .then(response => {
                 // slice it off from the state
                 const { criteria } = this.state;
@@ -79,13 +81,13 @@ class BidDetail extends Component {
               .catch(error => {
                 console.log(error);
               });
-          },
+          }
         },
         {
-          label: "No",
+          label: "No"
           // onClick: () => alert("Click No")
-        },
-      ],
+        }
+      ]
     });
   };
 
@@ -122,7 +124,7 @@ class BidDetail extends Component {
             </Form>
           </div>
         );
-      },
+      }
     });
   };
 
@@ -136,7 +138,7 @@ class BidDetail extends Component {
           label: "Yes",
           onClick: () => {
             axios
-              .delete(`/api/bid/${bid_id}/contractor/${id}`)
+              .delete(`${apiUrl}/api/bid/${bid_id}/contractor/${id}`)
               .then(response => {
                 // slice it off from the state
                 const { contractors } = this.state;
@@ -151,13 +153,13 @@ class BidDetail extends Component {
               .catch(error => {
                 console.log(error);
               });
-          },
+          }
         },
         {
-          label: "No",
+          label: "No"
           // onClick: () => alert("Click No")
-        },
-      ],
+        }
+      ]
     });
   };
 
@@ -167,7 +169,7 @@ class BidDetail extends Component {
     const name = target.name;
 
     await this.setState({
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -181,7 +183,7 @@ class BidDetail extends Component {
     console.log(id);
 
     axios
-      .post(`/api/bid/${bid_id}/add-contractor-price/${id}`, data)
+      .post(`${apiUrl}/api/bid/${bid_id}/add-contractor-price/${id}`, data)
       .then(resp => {
         console.log(resp);
       })
